@@ -36,7 +36,7 @@
          </children>
       </Group>
       <Label layoutX="11.0" layoutY="528.0" prefHeight="23.0" prefWidth="65.0" text="Repository:" />
-      <Hyperlink layoutX="90.0" layoutY="528.0" text="Hyperlink" />
+      <Hyperlink layoutX="90.0" layoutY="528.0" text="https://github.com/vizonet/CVS_Lab_1.git" />
       <Button layoutX="297.0" layoutY="456.0" mnemonicParsing="false" text="Save image" />
       <Button layoutX="76.0" layoutY="456.0" mnemonicParsing="false" text="Save image" />
       <Label contentDisplay="CENTER" layoutX="489.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="98.0" text="Filter matrix" textAlignment="CENTER" wrapText="true">
