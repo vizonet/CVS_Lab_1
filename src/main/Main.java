@@ -13,7 +13,6 @@ import java.io.InputStream;
 import org.opencv.core.Core;
 
 public class Main extends Application {
-    private static Scene scene;
     public static final String title = "Linear spatial filtering";
     // установка библиотеки в статическую память
     static {
@@ -23,7 +22,7 @@ public class Main extends Application {
     @Override
     public void start(Stage rootStage) throws Exception {
         //Parent root = FXMLLoader.load(getClass().getResource("../resources/spatial_filter.fxml"));
-        scene = new Scene(loadFXML("../resources/spatial_filter"));  // primary secondary
+        Scene scene = new Scene(loadFXML("../resources/spatial_filter"));  // primary secondary
         rootStage.setScene(scene); // root, 300, 275
         rootStage.setTitle(title);
         InputStream iconStream = getClass().getResourceAsStream("../resources/icon.ico");
