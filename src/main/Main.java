@@ -46,6 +46,16 @@ public class Main extends Application {
         launch(args);// запуск окна программы
     }
 
+    @Override
+    public void stop(){
+        // Все действия при закрытии приложения
+    }
+
+    @Override
+    public void init(){
+        // Инициализация любых данных, до включения основного потока Start в работу
+    }
+
     private static Parent loadFXML(String fxml) throws IOException { // загрузчик fxml-шаблонов
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();

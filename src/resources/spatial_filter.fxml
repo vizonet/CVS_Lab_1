@@ -19,11 +19,11 @@
       <Pane layoutX="259.0" layoutY="58.0" prefHeight="91.0" prefWidth="151.0" />
       <Group layoutX="18.0" layoutY="58.0">
          <children>
-            <Button fx:id="loadBtn" layoutX="61.0" layoutY="156.0" mnemonicParsing="false" onMouseClicked="#load_image" text="New image" />
-            <Button fx:id="saveGSclBtn" layoutX="284.0" layoutY="156.0" mnemonicParsing="false" text="Save image" />
-            <Button fx:id="saveApl1Btn" layoutX="284.0" layoutY="405.0" mnemonicParsing="false" text="Save image" />
-            <Button fx:id="saveApl2Btn" layoutX="62.0" layoutY="405.0" mnemonicParsing="false" text="Save image" />
-            <ImageView id="original" fx:id="original" fitHeight="150.0" fitWidth="200.0" layoutY="-10.0" pickOnBounds="true" preserveRatio="true">
+            <Button layoutX="61.0" layoutY="156.0" mnemonicParsing="false" onMouseClicked="#load_image" text="New image" />
+            <Button layoutX="284.0" layoutY="156.0" mnemonicParsing="false" text="Save image" />
+            <Button layoutX="284.0" layoutY="405.0" mnemonicParsing="false" text="Save image" />
+            <Button layoutX="62.0" layoutY="405.0" mnemonicParsing="false" text="Save image" />
+            <ImageView fx:id="originalImg" fitHeight="150.0" fitWidth="200.0" layoutY="-10.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@empty_img.png" />
                </image>
@@ -31,7 +31,7 @@
                   <InnerShadow />
                </effect>
             </ImageView>
-            <ImageView id="apply1" fitHeight="150.0" fitWidth="200.0" layoutY="239.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="grayscaleImg" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="-10.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@empty_img.png" />
                </image>
@@ -39,7 +39,7 @@
                   <InnerShadow />
                </effect>
             </ImageView>
-            <ImageView id="apply2" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="239.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="apply1Img" fitHeight="150.0" fitWidth="200.0" layoutY="239.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@empty_img.png" />
                </image>
@@ -47,7 +47,7 @@
                   <InnerShadow />
                </effect>
             </ImageView>
-            <ImageView id="grayscale" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="-10.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="apply2Img" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="239.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@empty_img.png" />
                </image>
