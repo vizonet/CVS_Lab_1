@@ -4,40 +4,38 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import javafx.stage.Window;
 import org.opencv.core.Core;
 
 public class Main extends Application {
-    public static final String title = "Linear spatial filtering";
-    // установка библиотеки в статическую память
-    static {
+    public static Window primaryStage;
+
+    static { // загрузка библиотеки OpenCV в статическую память
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        // nu.pattern.OpenCV.loadShared();
-    }
-    @Override
-    public void start(Stage rootStage) throws Exception {
-        //Parent root = FXMLLoader.load(getClass().getResource("../resources/spatial_filter.fxml"));
-        Scene scene = new Scene(loadFXML("../resources/spatial_filter"));  // primary secondary
-        rootStage.setScene(scene); // root, 300, 275
-        rootStage.setTitle(title);
-        InputStream iconStream = getClass().getResourceAsStream("../resources/icon.ico");
-        Image image = new Image(iconStream);
-        rootStage.getIcons().add(image);
-        rootStage.show();
+        // nu.pattern.OpenCV.loadShared(); // для maven
     }
 
-    private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml + ".fxml"));
-        return fxmlLoader.load();
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // главное окно программы
+        //Parent root = FXMLLoader.load(getClass().getResource("../resources/spatial_filter.fxml"));
+        Scene scene = new Scene(loadFXML("../resources/spatial_filter"));
+        primaryStage.setScene(scene); // , 300, 275
+        primaryStage.setTitle("Linear spatial filtering"); // заголовок окна
+        InputStream iconStream = getClass().getResourceAsStream("../resources/icon.ico");
+        Image icon = new Image(iconStream);
+        primaryStage.getIcons().add(icon);
+        primaryStage.show();
     }
 
     public static void main(String[] args) {
-        /* проверка библиотеки OpenCV
+        /** // проверка библиотеки OpenCV
         System.out.println(Core.VERSION); // 3.3.0
         System.out.println(Core.VERSION_MAJOR); // 3
         System.out.println(Core.VERSION_MINOR); // 3
@@ -45,7 +43,11 @@ public class Main extends Application {
         System.out.println(Core.NATIVE_LIBRARY_NAME); // opencv_java
         System.out.println(Core.getBuildInformation());
         */
-        // запуск окна программы
-        launch(args);
+        launch(args);// запуск окна программы
+    }
+
+    private static Parent loadFXML(String fxml) throws IOException { // загрузчик fxml-шаблонов
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml + ".fxml"));
+        return fxmlLoader.load();
     }
 }

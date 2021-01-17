@@ -5,6 +5,8 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -12,33 +14,66 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="566.0" prefWidth="635.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
+<AnchorPane prefHeight="566.0" prefWidth="634.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
    <children>
       <Pane layoutX="259.0" layoutY="58.0" prefHeight="91.0" prefWidth="151.0" />
-      <Group layoutX="14.0" layoutY="58.0">
+      <Group layoutX="18.0" layoutY="58.0">
          <children>
-            <ImageView id="original" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView id="apply1" fitHeight="150.0" fitWidth="200.0" layoutY="239.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView id="apply2" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="239.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView id="grayscale" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" pickOnBounds="true" preserveRatio="true" />
-            <Button layoutX="284.0" layoutY="157.0" mnemonicParsing="false" text="Save image" />
-            <Button layoutX="68.0" layoutY="157.0" mnemonicParsing="false" onMouseClicked="#loadImage" text="Load image" />
-            <Label contentDisplay="CENTER" layoutX="283.0" layoutY="197.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="78.0" text="Apply 2" textAlignment="CENTER" wrapText="true">
+            <Button fx:id="loadBtn" layoutX="61.0" layoutY="156.0" mnemonicParsing="false" onMouseClicked="#load_image" text="New image" />
+            <Button fx:id="saveGSclBtn" layoutX="284.0" layoutY="156.0" mnemonicParsing="false" text="Save image" />
+            <Button fx:id="saveApl1Btn" layoutX="284.0" layoutY="405.0" mnemonicParsing="false" text="Save image" />
+            <Button fx:id="saveApl2Btn" layoutX="62.0" layoutY="405.0" mnemonicParsing="false" text="Save image" />
+            <ImageView id="original" fx:id="original" fitHeight="150.0" fitWidth="200.0" layoutY="-10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@empty_img.png" />
+               </image>
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </ImageView>
+            <ImageView id="apply1" fitHeight="150.0" fitWidth="200.0" layoutY="239.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@empty_img.png" />
+               </image>
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </ImageView>
+            <ImageView id="apply2" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="239.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@empty_img.png" />
+               </image>
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </ImageView>
+            <ImageView id="grayscale" fitHeight="150.0" fitWidth="200.0" layoutX="222.0" layoutY="-10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@empty_img.png" />
+               </image>
+               <effect>
+                  <InnerShadow />
+               </effect>
+            </ImageView>
+            <Label contentDisplay="CENTER" layoutX="72.0" layoutY="204.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="76.0" text="Apply 1" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <Label contentDisplay="CENTER" layoutX="69.0" layoutY="197.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="76.0" text="Apply 1" textAlignment="CENTER" wrapText="true">
+            <Label contentDisplay="CENTER" layoutX="293.0" layoutY="204.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="78.0" text="Apply 2" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
          </children>
       </Group>
+      <Label contentDisplay="CENTER" layoutX="295.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="78.0" text="Grayscale" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
       <Label layoutX="11.0" layoutY="528.0" prefHeight="23.0" prefWidth="65.0" text="Repository:" />
       <Hyperlink layoutX="90.0" layoutY="528.0" text="https://github.com/vizonet/CVS_Lab_1.git" />
-      <Button layoutX="297.0" layoutY="456.0" mnemonicParsing="false" text="Save image" />
-      <Button layoutX="76.0" layoutY="456.0" mnemonicParsing="false" text="Save image" />
       <Label contentDisplay="CENTER" layoutX="489.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="98.0" text="Filter matrix" textAlignment="CENTER" wrapText="true">
          <font>
             <Font size="18.0" />
@@ -71,11 +106,6 @@
       </HBox>
       <Button layoutX="555.0" layoutY="164.0" minWidth="0.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="59.0" text="Apply 2" textAlignment="CENTER" />
       <Button layoutX="463.0" layoutY="164.0" minWidth="0.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="59.0" text="Apply 1" textAlignment="CENTER" />
-      <Label contentDisplay="CENTER" layoutX="295.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="78.0" text="Grayscale" textAlignment="CENTER" wrapText="true">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
       <Label contentDisplay="CENTER" layoutX="80.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="76.0" text="Original" textAlignment="CENTER" wrapText="true">
          <font>
             <Font size="18.0" />
