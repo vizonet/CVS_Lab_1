@@ -2,6 +2,7 @@ package main;
 
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.scene.image.Image;
 import javafx.embed.swing.SwingFXUtils;
@@ -38,8 +39,14 @@ public class Controller {
     @FXML
     private ImageView apply2Img;
 
-    Path tmpPath = null;
+    Path tmpPath = null; // временная путь
+    Mat grayscaleMat, apply1Mat, apply2Mat; // для записи на диск
     private final Desktop desktop = Desktop.getDesktop();
+    //для записи на диск
+    // поиск в папке ресурсов, если подключено в fxml
+    InputStream picStream = getClass().getResourceAsStream("../resources/empty_img.png");
+    Image saveImg = new Image(picStream);
+
 
     /** способ активизации шаблона .fxml
      @FXML
@@ -61,7 +68,7 @@ public class Controller {
 
         // преобразования изображения
         Mat imgMat = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_UNCHANGED); // как есть // "C:\\book\\opencv\\foto1.jpg"
-        Mat grayscaleMat = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_GRAYSCALE); // оттенки серого
+        grayscaleMat = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_GRAYSCALE); // оттенки серого
         if (imgMat.empty()) {
             System.out.println("Изображение не загружено (возможно, кириллица в пути файла)");
         } else {
@@ -78,6 +85,29 @@ public class Controller {
 
         delTempPath(tmpPath); // Удаление временного каталога с файлом изображения
         return imgMat;
+    }
+
+    public void save_grayscale(MouseEvent mouseEvent) { // сохранение серого изображения на диск
+        saveFile(grayscaleMat);
+    }
+
+    public void save_apply1(MouseEvent mouseEvent) { // сохранение Apply1 на диск
+        apply1Mat = Imgcodecs.imread("../resources/empty_img.png", Imgcodecs.IMREAD_UNCHANGED);
+        saveFile(apply1Mat);
+    }
+
+    public void save_apply2(MouseEvent mouseEvent) { // сохранение Apply2 на диск
+        apply2Mat = Imgcodecs.imread("../resources/empty_img.png", Imgcodecs.IMREAD_UNCHANGED);
+        saveFile(apply2Mat);
+    }
+
+    private boolean saveFile(Mat matImg) { // Сохранить файл
+        List<File> files = choiceFileDialog("save"); // список файлов
+        boolean saved = Imgcodecs.imwrite(files.get(0).toString(), matImg);
+        if (!saved) {
+            System.out.println("Не удалось сохранить изображение!");
+        }
+        return saved;
     }
 
     /* Обработка загрузки и сохранения файлов */
@@ -113,17 +143,12 @@ public class Controller {
                 }
             }
             case "save" -> { // сохранение файла
-                //для записи на диск
-                // поиск в папке ресурсов, если подключено в fxml
-                InputStream picStream = getClass().getResourceAsStream("../resources/empty_img.png");
-                Image picture = new Image(picStream);
-
                 fileChooser.setTitle("Save the file"); // заголовок диалога
                 file = fileChooser.showSaveDialog(Main.primaryStage);
                 if (file != null) {
                     flist.add(file);
                     try {
-                        ImageIO.write(SwingFXUtils.fromFXImage(picture, null), getFileExtension(file), file);
+                        ImageIO.write(SwingFXUtils.fromFXImage(saveImg, null), getFileExtension(file), file);
                     } catch (IOException ex) {
                         System.out.println(ex.getMessage());
                     }
@@ -147,7 +172,7 @@ public class Controller {
         return result;
     }
 
-    Path setTempPath(File file) throws IOException { // Создание временного каталога с файлом
+        Path setTempPath(File file) throws IOException { // Создание временного каталога с файлом
         Path newfile = null;
         File tmpPath = new File("C:/__tmp");
         if (tmpPath.exists() || tmpPath.mkdir()) {
@@ -185,8 +210,6 @@ public class Controller {
     }
 
     private static void configureFileChooser(FileChooser fileChooser) { // Конфигурация окна открытия файла
-        // Set title for FileChooser
-        fileChooser.setTitle("Select Pictures");
         // Set Initial Directory
         fileChooser.setInitialDirectory(new File("C:/"));
         // Add Extension Filters
@@ -297,5 +320,5 @@ public class Controller {
         m.put(0, 0, buf);
         return m;
     }
-
+    // --------------
 }
