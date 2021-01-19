@@ -19,8 +19,10 @@ import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +41,9 @@ public class Controller {
     @FXML
     private ImageView apply2Img;
 
-    Path tmpPath = null; // временная путь
+    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss > "); // формат даты
+
+    Path tmpPath = null; // временный путь
     Mat grayscaleMat, apply1Mat, apply2Mat; // для записи на диск
     private final Desktop desktop = Desktop.getDesktop();
     //для записи на диск
@@ -72,11 +76,7 @@ public class Controller {
         if (imgMat.empty()) {
             System.out.println("Изображение не загружено (возможно, кириллица в пути файла)");
         } else {
-            System.out.println("Тип изображения: " + CvType.typeToString(imgMat.type()));
-            System.out.println("Ширина: " + imgMat.width());
-            System.out.println("Высота: " + imgMat.height());
-            System.out.println("Число каналов: " + imgMat.channels());
-
+            img_info(imgMat);
             //
             BufferedImage grayscaleBufImg = MatToBufferedImage(grayscaleMat);
             grayscaleImg.setImage(SwingFXUtils.toFXImage(grayscaleBufImg, null));
@@ -85,6 +85,12 @@ public class Controller {
 
         delTempPath(tmpPath); // Удаление временного каталога с файлом изображения
         return imgMat;
+    }
+
+    private void img_info(Mat imgMat) {
+        System.out.println("Type: " + CvType.typeToString(imgMat.type())
+                + "; Size WxH: " + imgMat.width() + "x" + imgMat.height()
+                + "px; Channels: " + imgMat.channels());
     }
 
     public void save_grayscale(MouseEvent mouseEvent) { // сохранение серого изображения на диск
@@ -104,9 +110,8 @@ public class Controller {
     private boolean saveFile(Mat matImg) { // Сохранить файл
         List<File> files = choiceFileDialog("save"); // список файлов
         boolean saved = Imgcodecs.imwrite(files.get(0).toString(), matImg);
-        if (!saved) {
-            System.out.println("Не удалось сохранить изображение!");
-        }
+        System.out.println(dateFormat.format(new Date())
+                + (saved ? "Изображение сохранено в " + files.get(0).toString(): "Не удалось сохранить изображение!"));
         return saved;
     }
 
@@ -129,7 +134,7 @@ public class Controller {
                 if (file != null) {
                     if (openFile(file))
                         flist.add(file);
-                    System.out.println("Открыт файл: " + file.getAbsolutePath());
+                    System.out.println(dateFormat.format(new Date()) + "Выбран файл: " + file.getAbsolutePath());
                 }
             }
             case "multiple" -> { // загрузка нескольких файлов - showOpenMultipleDialog
@@ -139,7 +144,7 @@ public class Controller {
                     for (File nextfile : flist) {
                         openFile(nextfile);
                     }
-                    System.out.println("Открыты несколько файлов из: " + flist.get(0).getParent());
+                    System.out.println(dateFormat.format(new Date()) + "Выбрано несколько файлов из: " + flist.get(0).getParent());
                 }
             }
             case "save" -> { // сохранение файла
@@ -179,7 +184,7 @@ public class Controller {
             Path source = FileSystems.getDefault().getPath(file.getAbsolutePath());
             Path to = FileSystems.getDefault().getPath(tmpPath.getPath(), "__image." + getFileExtension(file));
             newfile = Files.copy(source, to, REPLACE_EXISTING); // to.resolve(source.getFileName())
-            System.out.println("Создан временный каталог с файлом: " + newfile.toString());
+            System.out.println(dateFormat.format(new Date()) + "Создан временный каталог с файлом: " + newfile.toString());
         } else {
             System.out.println("Временный каталог не создан!");
         }
@@ -190,7 +195,7 @@ public class Controller {
         File file = new File(tmpPath.toString());
         if (file.exists()) {
             if (file.delete() && new File(file.getParent()).delete()) { // удаляется файл, затем каталог
-                System.out.println("Временный каталог удалён: " + file.getParent());
+                System.out.println(dateFormat.format(new Date()) + "Временный каталог удалён: " + file.getParent());
             } else {
                 System.out.println("Невозможно удалить временный файл и/или каталог: " + file.getAbsolutePath());
             }
