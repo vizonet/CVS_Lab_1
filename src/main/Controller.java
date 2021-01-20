@@ -1,6 +1,7 @@
 package main;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Spinner;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
@@ -41,8 +42,21 @@ public class Controller {
     @FXML
     private ImageView apply2Img;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss > "); // формат даты
+    // инциализация спиннеров (filter matrix)
+    @FXML
+    Spinner sp0, sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8; // элементы окна
+    int [][] filterMatrix = new int[][] { // матрица 3х3
+            {(int) sp0.getValue(), (int) sp1.getValue(), (int) sp2.getValue() },
+            {(int) sp3.getValue(), (int) sp4.getValue(), (int) sp5.getValue() },
+            {(int) sp6.getValue(), (int) sp7.getValue(), (int) sp8.getValue() }
+    };
 
+    // преобразование изображения с помощью фильтра
+    public void filter(Mat img, int[][] fmatrix) {
+
+    }
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss > "); // формат даты
     Path tmpPath = null; // временный путь
     Mat grayscaleMat, apply1Mat, apply2Mat; // для записи на диск
     private final Desktop desktop = Desktop.getDesktop();
