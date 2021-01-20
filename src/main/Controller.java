@@ -46,9 +46,9 @@ public class Controller {
     @FXML
     Spinner sp0, sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8; // элементы окна
     int [][] filterMatrix = new int[][] { // матрица 3х3
-            {(int) sp0.getValue(), (int) sp1.getValue(), (int) sp2.getValue() },
-            {(int) sp3.getValue(), (int) sp4.getValue(), (int) sp5.getValue() },
-            {(int) sp6.getValue(), (int) sp7.getValue(), (int) sp8.getValue() }
+            { (int) sp0.getValue(), (int) sp1.getValue(), (int) sp2.getValue() },
+            { (int) sp3.getValue(), (int) sp4.getValue(), (int) sp5.getValue() },
+            { (int) sp6.getValue(), (int) sp7.getValue(), (int) sp8.getValue() }
     };
 
     // преобразование изображения с помощью фильтра
