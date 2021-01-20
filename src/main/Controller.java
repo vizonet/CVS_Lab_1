@@ -45,8 +45,9 @@ public class Controller  implements Initializable {
     // инциализация спиннеров (filter matrix)
     @FXML
     Spinner<Integer> sp0, sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8; // элементы окна
+    Spinner<Integer> spArr[];
     void initFilterMatrix() { // инициализация значений спиннеров
-        Spinner<Integer>[] spArr = new Spinner[] { sp0, sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8 };
+        spArr = new Spinner[] { sp0, sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8 };
         for (int i = 0; i < spArr.length; i++) {
             spArr[i] = new Spinner<Integer>(-255, 255, 0, 1); // min, max, initial, step
         }
