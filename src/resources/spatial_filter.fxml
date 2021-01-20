@@ -88,21 +88,21 @@
             <VBox>
                <children>
                   <Spinner fx:id="sp0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-                  <Spinner fx:id="sp1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-                  <Spinner fx:id="sp2" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-               </children>
-            </VBox>
-            <VBox>
-               <children>
                   <Spinner fx:id="sp3" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-                  <Spinner fx:id="sp4" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-                  <Spinner fx:id="sp5" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
+                  <Spinner fx:id="sp6" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
                </children>
             </VBox>
             <VBox>
                <children>
-                  <Spinner fx:id="sp6" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
+                  <Spinner fx:id="sp1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
+                  <Spinner fx:id="sp4" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
                   <Spinner fx:id="sp7" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
+               </children>
+            </VBox>
+            <VBox>
+               <children>
+                  <Spinner fx:id="sp2" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
+                  <Spinner fx:id="sp5" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
                   <Spinner fx:id="sp8" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
                </children>
             </VBox>

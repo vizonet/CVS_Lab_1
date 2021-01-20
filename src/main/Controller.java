@@ -1,11 +1,12 @@
 package main;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Spinner;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.FileChooser;
 import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
 import javafx.embed.swing.SwingFXUtils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -17,13 +18,12 @@ import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +31,7 @@ import javax.imageio.ImageIO;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-public class Controller {
+public class Controller  implements Initializable {
     // связка элементов окна с переменными по fx:id-имени
     @FXML
     private ImageView originalImg;
@@ -44,12 +44,26 @@ public class Controller {
 
     // инциализация спиннеров (filter matrix)
     @FXML
-    Spinner sp0, sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8; // элементы окна
-    int [][] filterMatrix = new int[][] { // матрица 3х3
-            { (int) sp0.getValue(), (int) sp1.getValue(), (int) sp2.getValue() },
-            { (int) sp3.getValue(), (int) sp4.getValue(), (int) sp5.getValue() },
-            { (int) sp6.getValue(), (int) sp7.getValue(), (int) sp8.getValue() }
-    };
+    Spinner<Integer> sp0, sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8; // элементы окна
+    void initFilterMatrix() { // инициализация значений спиннеров
+        Spinner<Integer>[] spArr = new Spinner[] { sp0, sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8 };
+        for (int i = 0; i < spArr.length; i++) {
+            spArr[i] = new Spinner<Integer>(-255, 255, 0, 1); // min, max, initial, step
+        }
+    }
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        initFilterMatrix();
+        System.out.println(sp0.getValue());
+    }
+    private int[][] getFilterMatrix() { // инициализация значениями (после нажатия на Apply)
+        int [][] filterMatrix = new int[][] { // матрица 3х3
+                { (int) sp0.getValue(), (int) sp1.getValue(), (int) sp2.getValue() },
+                { (int) sp3.getValue(), (int) sp4.getValue(), (int) sp5.getValue() },
+                { (int) sp6.getValue(), (int) sp7.getValue(), (int) sp8.getValue() }
+        };
+        return filterMatrix;
+    }
 
     // преобразование изображения с помощью фильтра
     public void filter(Mat img, int[][] fmatrix) {
