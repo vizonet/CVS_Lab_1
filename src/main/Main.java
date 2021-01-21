@@ -16,14 +16,22 @@ import org.opencv.core.Core;
 public class Main extends Application {
     public static Window primaryStage;
 
-    static { // загрузка библиотеки OpenCV в статическую память
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        // nu.pattern.OpenCV.loadShared(); // для maven
+    @Override
+    public void init() throws Exception {
+        super.init();
+        // Инициализация любых данных, до включения основного потока Start в работу
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        // главное окно программы
+    public void start(Stage primaryStage) throws Exception { // запуск главного окна программы
+        /** // получаем переданные параметры
+        Application.Parameters params = getParameters();
+        List<String> unnamedParams = getParameters().getUnnamed();
+        int i =0;
+        for(String param: unnamedParams){
+            i++;
+            System.out.printf("%d - %s \n", i, param);
+        }*/
         //Parent root = FXMLLoader.load(getClass().getResource("../resources/spatial_filter.fxml"));
         Scene scene = new Scene(loadFXML("../resources/spatial_filter"));
         primaryStage.setScene(scene); // , 300, 275
@@ -32,6 +40,17 @@ public class Main extends Application {
         Image icon = new Image(iconStream);
         primaryStage.getIcons().add(icon);
         primaryStage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // Все действия при закрытии приложения
+        super.stop();
+    }
+
+    static { // загрузка библиотеки OpenCV в статическую память
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        // nu.pattern.OpenCV.loadShared(); // для maven
     }
 
     public static void main(String[] args) {
@@ -44,16 +63,6 @@ public class Main extends Application {
         System.out.println(Core.getBuildInformation());
         */
         launch(args);// запуск окна программы
-    }
-
-    @Override
-    public void stop(){
-        // Все действия при закрытии приложения
-    }
-
-    @Override
-    public void init(){
-        // Инициализация любых данных, до включения основного потока Start в работу
     }
 
     private static Parent loadFXML(String fxml) throws IOException { // загрузчик fxml-шаблонов
