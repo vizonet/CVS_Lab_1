@@ -87,7 +87,7 @@
          <children>
             <VBox>
                <children>
-                  <Spinner fx:id="sp0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
+                  <Spinner fx:id="spo" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
                   <Spinner fx:id="sp3" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
                   <Spinner fx:id="sp6" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
                </children>

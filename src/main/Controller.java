@@ -55,7 +55,8 @@ public class Controller  implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initFilterMatrix();
-        System.out.println(sp0.getValue());
+        // тестовый вывод спиннера
+        System.out.println(sp0.getValue() + ", " + spArr[0].getValue());
     }
     private int[][] getFilterMatrix() { // инициализация значениями (после нажатия на Apply)
         int [][] filterMatrix = new int[][] { // матрица 3х3
