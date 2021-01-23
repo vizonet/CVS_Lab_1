@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.util.ArrayList?>
+
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
@@ -14,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="566.0" prefWidth="634.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
+<AnchorPane prefHeight="566.0" prefWidth="681.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
    <children>
       <Pane layoutX="259.0" layoutY="58.0" prefHeight="91.0" prefWidth="151.0" />
       <Group layoutX="18.0" layoutY="58.0">
@@ -55,64 +57,93 @@
                   <InnerShadow />
                </effect>
             </ImageView>
-            <Label contentDisplay="CENTER" layoutX="72.0" layoutY="204.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="76.0" text="Apply 1" textAlignment="CENTER" wrapText="true">
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="62.0" layoutY="204.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="76.0" text="Apply 1" textAlignment="CENTER" wrapText="true">
                <font>
-                  <Font size="18.0" />
+                  <Font name="Lucida Fax Demibold" size="18.0" />
                </font>
             </Label>
-            <Label contentDisplay="CENTER" layoutX="293.0" layoutY="204.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="78.0" text="Apply 2" textAlignment="CENTER" wrapText="true">
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="283.0" layoutY="204.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="78.0" text="Apply 2" textAlignment="CENTER" wrapText="true">
                <font>
-                  <Font size="18.0" />
+                  <Font name="Lucida Fax Demibold" size="18.0" />
                </font>
             </Label>
          </children>
       </Group>
-      <Label contentDisplay="CENTER" layoutX="295.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="78.0" text="Grayscale" textAlignment="CENTER" wrapText="true">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="68.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="98.0" text="Original" textAlignment="CENTER" wrapText="true">
          <font>
-            <Font size="18.0" />
+            <Font name="Lucida Fax Demibold" size="18.0" />
          </font>
       </Label>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="291.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="98.0" text="Grayscale" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font name="Lucida Fax Demibold" size="18.0" />
+         </font>
+      </Label>
+      <Group layoutX="463.0" layoutY="6.0">
+         <children>
+            <HBox layoutY="42.0" prefHeight="93.0" prefWidth="197.0">
+               <children>
+                  <VBox prefHeight="91.0" prefWidth="63.0">
+                     <children>
+                        <Spinner fx:id="sp0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="65.0" />
+                        <Spinner fx:id="sp3" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="65.0" />
+                        <Spinner fx:id="sp6" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="65.0" />
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Spinner fx:id="sp1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="65.0" />
+                        <Spinner fx:id="sp4" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="65.0" />
+                        <Spinner fx:id="sp7" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="65.0" />
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Spinner fx:id="sp2" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="65.0" />
+                        <Spinner fx:id="sp5" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="65.0" />
+                        <Spinner fx:id="sp8" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="65.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Label alignment="CENTER" layoutY="135.0" prefHeight="26.0" prefWidth="197.0" text="Range values: [-255; 255]">
+               <font>
+                  <Font name="Artifakt Element Bold" size="13.0" />
+               </font>
+            </Label>
+            <Button onAction="#Apply1" layoutY="167.0" minWidth="0.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="Apply 1" textAlignment="CENTER" />
+            <Button onAction="#Apply2" layoutX="117.0" layoutY="167.0" minWidth="0.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="Apply 2" textAlignment="CENTER" />
+         </children>
+         <!-- use a define block to define an array list containing the Spinners: -->
+         <fx:define>
+            <ArrayList fx:id="spArray">
+               <fx:reference source="sp0" />
+               <fx:reference source="sp1" />
+               <fx:reference source="sp2" />
+               <fx:reference source="sp3" />
+               <fx:reference source="sp4" />
+               <fx:reference source="sp5" />
+               <fx:reference source="sp6" />
+               <fx:reference source="sp7" />
+               <fx:reference source="sp8" />
+            </ArrayList>
+         </fx:define>
+      </Group>
       <Group layoutX="17.0" layoutY="528.0">
          <children>
-            <Label prefHeight="23.0" prefWidth="65.0" text="Repository:" />
-            <Hyperlink layoutX="79.0" text="https://github.com/vizonet/CVS_Lab_1.git" />
+            <Label layoutY="-4.0" prefHeight="23.0" prefWidth="109.0" text="Repository:">
+               <font>
+                  <Font name="Magneto Bold" size="16.0" />
+               </font></Label>
+            <Hyperlink layoutX="107.0" text="https://github.com/vizonet/CVS_Lab_1.git">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font></Hyperlink>
          </children>
       </Group>
-      <Label contentDisplay="CENTER" layoutX="489.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="98.0" text="Filter matrix" textAlignment="CENTER" wrapText="true">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="497.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="129.0" text="Filter matrix" textAlignment="CENTER" wrapText="true">
          <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <HBox layoutX="463.0" layoutY="56.0" prefHeight="91.0" prefWidth="151.0">
-         <children>
-            <VBox>
-               <children>
-                  <Spinner fx:id="spo" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-                  <Spinner fx:id="sp3" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-                  <Spinner fx:id="sp6" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-               </children>
-            </VBox>
-            <VBox>
-               <children>
-                  <Spinner fx:id="sp1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-                  <Spinner fx:id="sp4" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-                  <Spinner fx:id="sp7" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-               </children>
-            </VBox>
-            <VBox>
-               <children>
-                  <Spinner fx:id="sp2" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-                  <Spinner fx:id="sp5" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-                  <Spinner fx:id="sp8" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="50.0" />
-               </children>
-            </VBox>
-         </children>
-      </HBox>
-      <Button layoutX="555.0" layoutY="164.0" minWidth="0.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="59.0" text="Apply 2" textAlignment="CENTER" />
-      <Button layoutX="463.0" layoutY="164.0" minWidth="0.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="59.0" text="Apply 1" textAlignment="CENTER" />
-      <Label contentDisplay="CENTER" layoutX="80.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="76.0" text="Original" textAlignment="CENTER" wrapText="true">
-         <font>
-            <Font size="18.0" />
+            <Font name="Lucida Fax Demibold" size="18.0" />
          </font>
       </Label>
    </children>

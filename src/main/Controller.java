@@ -1,5 +1,6 @@
 package main;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Spinner;
@@ -44,29 +45,43 @@ public class Controller  implements Initializable {
 
     // инциализация спиннеров (filter matrix)
     @FXML
-    Spinner<Integer> sp0, sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8; // элементы окна
-    Spinner<Integer> spArr[];
-    void initFilterMatrix() { // инициализация значений спиннеров
-        spArr = new Spinner[] { sp0, sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8 };
-        for (int i = 0; i < spArr.length; i++) {
-            spArr[i] = new Spinner<Integer>(-255, 255, 0, 1); // min, max, initial, step
+    List<Spinner> spArray; // список элементов окна типа Spinner
+    void initFilterMatrix() { // инициализация Spinner-контролов
+        for (int i = 0; i < spArray.size(); i++) {
+            spArray.set(i, new Spinner(-5, 5, 1, 2)); // min, max, initial, step
+            spArray.get(i).setEditable(true);
+            spArray.get(i).getEditor();
+            spArray.get(i).editorProperty();
+            System.out.println(i + ": " + spArray.get(i).getValue()); //  + ", " + spArr[0].getValue()
         }
     }
-    @Override
+
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
+    @Override //@FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initFilterMatrix();
         // тестовый вывод спиннера
-        System.out.println(sp0.getValue() + ", " + spArr[0].getValue());
     }
     private int[][] getFilterMatrix() { // инициализация значениями (после нажатия на Apply)
-        int [][] filterMatrix = new int[][] { // матрица 3х3
-                { (int) sp0.getValue(), (int) sp1.getValue(), (int) sp2.getValue() },
-                { (int) sp3.getValue(), (int) sp4.getValue(), (int) sp5.getValue() },
-                { (int) sp6.getValue(), (int) sp7.getValue(), (int) sp8.getValue() }
-        };
-        return filterMatrix;
+        int[][] matrix = new int[3][3]; // матрица 3х3
+        int n = 0; // линейный индекс
+        for (int j=0; j<3; j++) {
+            for (int i=0; i<3; i++) {
+                matrix[j][i] = (int) spArray.get(n).getValue();
+                n++;
+            }
+        }
+        return matrix;
     }
-
+    private void viewMatrix(List<Spinner> matrix){
+        System.out.println("\nМатрица 3х3:");
+        for (Spinner elem : matrix) {
+            System.out.print(elem.getValue() + " ");
+        }
+    }
     // преобразование изображения с помощью фильтра
     public void filter(Mat img, int[][] fmatrix) {
 
@@ -136,6 +151,15 @@ public class Controller  implements Initializable {
         apply2Mat = Imgcodecs.imread("../resources/empty_img.png", Imgcodecs.IMREAD_UNCHANGED);
         saveFile(apply2Mat);
     }
+
+    public void Apply1(ActionEvent actionEvent) {
+        viewMatrix(spArray);
+    }
+
+    public void Apply2(ActionEvent actionEvent) {
+        viewMatrix(spArray);
+    }
+
 
     private boolean saveFile(Mat matImg) { // Сохранить файл
         List<File> files = choiceFileDialog("save"); // список файлов
