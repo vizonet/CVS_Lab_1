@@ -4,11 +4,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.util.StringConverter;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -28,6 +30,7 @@ import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -46,13 +49,41 @@ public class Controller  implements Initializable {
     // инциализация спиннеров (filter matrix)
     @FXML
     List<Spinner> spArray; // список элементов окна типа Spinner
+
     void initFilterMatrix() { // инициализация Spinner-контролов
+        Pattern p = Pattern.compile("^-?\\d+$"); // целые числа (в т.ч. отрицательные) // (\d+\.?\d*)? - вещественные чисел
         for (int i = 0; i < spArray.size(); i++) {
-            spArray.set(i, new Spinner(-5, 5, 1, 2)); // min, max, initial, step
-            spArray.get(i).setEditable(true);
-            spArray.get(i).getEditor();
-            spArray.get(i).editorProperty();
-            System.out.println(i + ": " + spArray.get(i).getValue()); //  + ", " + spArr[0].getValue()
+            // параметры спиннера // new Spinner(-5, 5, 1, 2)); // min, max, initial, step
+            spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-255, 255, 0, 1));
+            spArray.get(i).getValueFactory().setConverter(
+                    new StringConverter() { // проверка на введённое значение и -> конвертирование
+                        @Override
+                        public String toString(Object obj) {
+                            return (obj == null) ? "0" : obj.toString();
+                        }
+                        @Override
+                        public Integer fromString(String s) {
+                            if (s.matches(p.toString())) {
+                                try {
+                                    return Integer.valueOf(s);
+                                }
+                                catch (NumberFormatException e) {
+                                    return 0;
+                                }
+                            }
+                            return 0;
+                        }
+                    }
+            );
+            spArray.get(i).setEditable(true); // ввод пользовательских значений
+            // обработчик ввода -> проверка по regexp
+            int finalI = i; // счёткик -> в константу
+            spArray.get(i).valueProperty().addListener((observable, oldValue, newValue) -> {
+                if (!p.matcher(newValue.toString()).matches())
+                    spArray.get(finalI).getValueFactory().setValue(oldValue);
+                System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue());
+            });
+            System.out.println("sp" + i + ": " + spArray.get(i).getValue());
         }
     }
 
@@ -78,8 +109,13 @@ public class Controller  implements Initializable {
     }
     private void viewMatrix(List<Spinner> matrix){
         System.out.println("\nМатрица 3х3:");
-        for (Spinner elem : matrix) {
-            System.out.print(elem.getValue() + " ");
+        int n = 0; // линейный счётчик
+        for (int j = 0; j < Math.sqrt(matrix.size()); j++) {
+            for (int i = 0; i < Math.sqrt(matrix.size()); i++) {
+                System.out.printf("%4d  ", matrix.get(n).getValue());
+                n++;
+            }
+            System.out.println();
         }
     }
     // преобразование изображения с помощью фильтра
