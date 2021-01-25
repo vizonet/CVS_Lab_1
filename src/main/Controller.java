@@ -6,6 +6,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
@@ -57,7 +59,7 @@ public class Controller  implements Initializable {
             spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-255, 255, 0, 1));
             spArray.get(i).setEditable(true); // ввод пользовательских значений
             spArray.get(i).getValueFactory().setConverter(
-                    new StringConverter() { // проверка на введённое значение и -> конвертирование
+                    new StringConverter() { // проверка на введённое значение и -> конвертация значения
                         @Override
                         public String toString(Object obj) {
                             return (obj == null) ? "0" : obj.toString();
@@ -76,16 +78,30 @@ public class Controller  implements Initializable {
                         }
                     }
             );
-        }
-    }
-    // обработчик ввода -> проверка по regexp
-    int finalI = i; // счёткик -> в константу
+            // Дополнительные обработчики ввода
+            int finalI = i; // счётчик -> в константу
+            spArray.get(i).addEventFilter(KeyEvent.KEY_TYPED, event -> {
+                if (!p.matcher(spArray.get(finalI).toString()).matches())
+                    spArray.get(finalI).getValueFactory().setValue(0);
+            });
+            // 1. Проверка по regexp (когда он вызывается?)
+            /*
             spArray.get(i).valueProperty().addListener((observable, oldValue, newValue) -> {
-        if (!p.matcher(newValue.toString()).matches())
-            spArray.get(finalI).getValueFactory().setValue(oldValue);
-        System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue()); // вывод значения при изменении
-    });
-            System.out.println("sp" + i + ": " + spArray.get(i).getValue()); // вывод значений инициализированных спиннеров
+                if (!p.matcher(newValue.toString()).matches())
+                    spArray.get(finalI).getValueFactory().setValue(oldValue);
+                System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue()); // вывод значения при изменении
+            });
+            // 2. Потеря фокуса
+            spArray.get(i).focusedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    spArray.get(finalI).increment(0); // won't change value, but will commit editor
+                }
+                System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue()); // вывод значения при изменении
+            });*/
+            // вывод значений инициализированных спиннеров
+            System.out.println("sp" + i + ": " + spArray.get(i).getValue());
+    }
+}
 
     /**
      * Initializes the controller class. This method is automatically called
