@@ -55,6 +55,7 @@ public class Controller  implements Initializable {
         for (int i = 0; i < spArray.size(); i++) {
             // параметры спиннера // new Spinner(-5, 5, 1, 2)); // min, max, initial, step
             spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-255, 255, 0, 1));
+            spArray.get(i).setEditable(true); // ввод пользовательских значений
             spArray.get(i).getValueFactory().setConverter(
                     new StringConverter() { // проверка на введённое значение и -> конвертирование
                         @Override
@@ -75,17 +76,16 @@ public class Controller  implements Initializable {
                         }
                     }
             );
-            spArray.get(i).setEditable(true); // ввод пользовательских значений
-            // обработчик ввода -> проверка по regexp
-            int finalI = i; // счёткик -> в константу
-            spArray.get(i).valueProperty().addListener((observable, oldValue, newValue) -> {
-                if (!p.matcher(newValue.toString()).matches())
-                    spArray.get(finalI).getValueFactory().setValue(oldValue);
-                System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue());
-            });
-            System.out.println("sp" + i + ": " + spArray.get(i).getValue());
         }
     }
+    // обработчик ввода -> проверка по regexp
+    int finalI = i; // счёткик -> в константу
+            spArray.get(i).valueProperty().addListener((observable, oldValue, newValue) -> {
+        if (!p.matcher(newValue.toString()).matches())
+            spArray.get(finalI).getValueFactory().setValue(oldValue);
+        System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue()); // вывод значения при изменении
+    });
+            System.out.println("sp" + i + ": " + spArray.get(i).getValue()); // вывод значений инициализированных спиннеров
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -109,7 +109,7 @@ public class Controller  implements Initializable {
     }
     private void viewMatrix(List<Spinner> matrix){
         System.out.println("\nМатрица 3х3:");
-        int n = 0; // линейный счётчик
+        int n = 0; // линейный индекс
         for (int j = 0; j < Math.sqrt(matrix.size()); j++) {
             for (int i = 0; i < Math.sqrt(matrix.size()); i++) {
                 System.out.printf("%4d  ", matrix.get(n).getValue());
@@ -138,10 +138,11 @@ public class Controller  implements Initializable {
      private void panel() throws IOException {
      Main.setRoot("spatial_filter");
      }
+      * @param mouseEvent
      */
 
     @FXML
-    public Mat load_image() throws IOException { // обработчик кнопки "Load Image" MouseEvent mouseEvent../resources/empty_img.png
+    public Mat load_image(MouseEvent mouseEvent) throws IOException { // обработчик кнопки "Load Image" MouseEvent mouseEvent../resources/empty_img.png
         // загрузка изображений (Прохоренок Н.)
         // public static Mat imread(String filename);
         // public static Mat imread(String filename, int flags); // сигнатура вызова
@@ -174,24 +175,25 @@ public class Controller  implements Initializable {
                 + "px; Channels: " + imgMat.channels());
     }
 
+    @FXML
     public void save_grayscale(MouseEvent mouseEvent) { // сохранение серого изображения на диск
         saveFile(grayscaleMat);
     }
-
+    @FXML
     public void save_apply1(MouseEvent mouseEvent) { // сохранение Apply1 на диск
         apply1Mat = Imgcodecs.imread("../resources/empty_img.png", Imgcodecs.IMREAD_UNCHANGED);
         saveFile(apply1Mat);
     }
-
+    @FXML
     public void save_apply2(MouseEvent mouseEvent) { // сохранение Apply2 на диск
         apply2Mat = Imgcodecs.imread("../resources/empty_img.png", Imgcodecs.IMREAD_UNCHANGED);
         saveFile(apply2Mat);
     }
-
+    @FXML
     public void Apply1(ActionEvent actionEvent) {
         viewMatrix(spArray);
     }
-
+    @FXML
     public void Apply2(ActionEvent actionEvent) {
         viewMatrix(spArray);
     }
