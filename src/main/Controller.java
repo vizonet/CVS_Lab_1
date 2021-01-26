@@ -78,11 +78,12 @@ public class Controller  implements Initializable {
                         }
                     }
             );
-            // Дополнительные обработчики ввода
-            int finalI = i; // счётчик -> в константу
-            spArray.get(i).addEventFilter(KeyEvent.KEY_TYPED, event -> {
-                if (!p.matcher(spArray.get(finalI).toString()).matches())
-                    spArray.get(finalI).getValueFactory().setValue(0);
+            // Дополнительные обработчики ввода (не влияют на работу спиннера)
+            int finalI = i; // счётчик -> в константу для использования внутри обработчиков
+            spArray.get(i).valueProperty().addListener((obs, oldValue, newValue) -> {
+                System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue());
+                if (!p.matcher(spArray.get(finalI).getValue().toString()).matches())
+                    spArray.get(finalI).getValueFactory().setValue(oldValue);
             });
             // 1. Проверка по regexp (когда он вызывается?)
             /*
@@ -90,7 +91,8 @@ public class Controller  implements Initializable {
                 if (!p.matcher(newValue.toString()).matches())
                     spArray.get(finalI).getValueFactory().setValue(oldValue);
                 System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue()); // вывод значения при изменении
-            });
+            });*/
+            /*
             // 2. Потеря фокуса
             spArray.get(i).focusedProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue) {
