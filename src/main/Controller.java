@@ -84,7 +84,7 @@ public class Controller  implements Initializable {
             System.out.println("Изображение не загружено (возможно, кириллица в пути файла)");
         } else {
             img_info(imgSrc);
-            //
+            // установка изображения в слот интерфейса окна
             BufferedImage grayscaleBufImg = MatToBufferedImage(imgGrayscale);
             grayscaleImg.setImage(SwingFXUtils.toFXImage(grayscaleBufImg, null));
         }
@@ -109,6 +109,8 @@ public class Controller  implements Initializable {
     @FXML
     public void Apply1(ActionEvent actionEvent) {
         viewMatrix(filterMatrix);
+        filter(imgGrayscale, filterMatrix, initFilterMatrix(spArray)); // фильтрация изображения матрицей свёртки
+        imgDst =
     }
     @FXML
     public void Apply2(ActionEvent actionEvent) {
@@ -123,6 +125,15 @@ public class Controller  implements Initializable {
      @param mouseEvent
      */
 
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded.
+     */
+    @Override //@FXML
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        filterSize = (int) Math.sqrt(spArray.size());
+        initInputMatrix();
+    }
 
     void initInputMatrix() { // инициализация Spinner-контролов
         Pattern p = Pattern.compile("^-?\\d+$"); // целые числа (в т.ч. отрицательные) // (\d+\.?\d*)? - вещественные чисел
@@ -175,22 +186,12 @@ public class Controller  implements Initializable {
                 System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue()); // вывод значения при изменении
             });*/
             // вывод значений инициализированных спиннеров
-    }
-}
-
-    /**
-     * Initializes the controller class. This method is automatically called
-     * after the fxml file has been loaded.
-     */
-    @Override //@FXML
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        filterSize = (int) Math.sqrt(spArray.size());
-        initInputMatrix();
+        }
     }
 
     private Mat initFilterMatrix(List<Spinner> matrix) { // инициализация значениями (после нажатия на Apply)
         // матрица свёртки из массива спиннеров
-        filterMatrix = new Mat(filterSize, filterSize, imgSrc.type()); // инициализация матрицы свёртки
+        filterMatrix = new Mat(filterSize, filterSize, imgGrayscale.type()); // инициализация матрицы свёртки
         int n = 0; // линейный индекс
         for (int j=0; j<3; j++) {
             for (int i=0; i<3; i++) {
@@ -200,27 +201,28 @@ public class Controller  implements Initializable {
         }
         return filterMatrix;
     }
+
     private void viewMatrix(Mat matrix){
-        System.out.println("\nМатрица свёртки " + matrix.size() + " типа " + matrix.type() + ":");
+        System.out.println("\nМатрица свёртки " + matrix.size() + " типа " + CvType.typeToString(matrix.type()) + ":");
         for (int j = 0, r = matrix.rows(); j < r; j++) {
             for (int i = 0, c = matrix.cols(); i < c; i++) {
-                System.out.printf("%4.5f  ", matrix.get(j, i));
+                System.out.printf(matrix.get(j, i) + " ");
             }
             System.out.println();
         }
     }
+
     // преобразование изображения с помощью фильтра
-    public void filter(Mat imgSrc, int[][] fmatrix ) { //getFilterMatrix()
+    public void filter(Mat imgGray, Mat imgDst, Mat kernel) {
         // метод filter2D() - фильтр с произвольными значениями на основе мартицы свёртки
         // (OpenCV Java, Прохорёнок Н., с.200)
         int ddepth = -1; // глубина целевого изображения (по умолчанию - глубина оригинала)
-        Mat kernel = initFilterMatrix(spArray); // матрица свёртки
         Point anchor = new Point(-1, -1); // координаты ядра свётрки (по умолчанию - центр матрицы)
         double delta = 0; // прибавление к результату (по умолчанию - 0)
         int borderType = Core.BORDER_REPLICATE; // тип рамки вокруг изображения (разд. 4.9). По умолчанию - BORDER_DEFAULT
         // BORDER_REPLICATE — повтор крайних пикселов
         // интерполяция пикселов
-        filter2D(imgSrc, imgDst, ddepth, kernel, anchor, delta, borderType);
+        filter2D(imgGray, imgDst, ddepth, kernel, anchor, delta, borderType);
     }
 
     private void img_info(Mat imgMat) {
