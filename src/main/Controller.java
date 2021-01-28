@@ -109,8 +109,9 @@ public class Controller  implements Initializable {
     @FXML
     public void Apply1(ActionEvent actionEvent) {
         viewMatrix(filterMatrix);
-        filter(imgGrayscale, filterMatrix, initFilterMatrix(spArray)); // фильтрация изображения матрицей свёртки
-        imgDst =
+        imgDst = filter(imgGrayscale, filterMatrix, initFilterMatrix(spArray)); // фильтрация изображения матрицей свёртки
+        // установка изображения в слот интерфейса окна
+        apply1Img.setImage(SwingFXUtils.toFXImage(MatToBufferedImage(imgDst), null));
     }
     @FXML
     public void Apply2(ActionEvent actionEvent) {
@@ -192,28 +193,28 @@ public class Controller  implements Initializable {
     private Mat initFilterMatrix(List<Spinner> matrix) { // инициализация значениями (после нажатия на Apply)
         // матрица свёртки из массива спиннеров
         filterMatrix = new Mat(filterSize, filterSize, imgGrayscale.type()); // инициализация матрицы свёртки
-        int n = 0; // линейный индекс
-        for (int j=0; j<3; j++) {
-            for (int i=0; i<3; i++) {
-                filterMatrix.put(0, 0, (double) (1.0 * (int) spArray.get(n).getValue()));
-                n++;
-            }
+        double[] data = new double[matrix.size()];  // данные для матрицы
+        for (int n=0; n<matrix.size(); n++) {
+            data[n] = 1.0 * (int) spArray.get(n).getValue();
         }
+        filterMatrix.put(0, 0, data);
         return filterMatrix;
     }
 
     private void viewMatrix(Mat matrix){
-        System.out.println("\nМатрица свёртки " + matrix.size() + " типа " + CvType.typeToString(matrix.type()) + ":");
+        System.out.println("\nМатрица свёртки " + matrix.size() + " типа " + CvType.typeToString(matrix.type()) + ":\n"
+                + matrix.dump());
+        /*
         for (int j = 0, r = matrix.rows(); j < r; j++) {
             for (int i = 0, c = matrix.cols(); i < c; i++) {
                 System.out.printf(matrix.get(j, i) + " ");
             }
             System.out.println();
-        }
+        }*/
     }
 
     // преобразование изображения с помощью фильтра
-    public void filter(Mat imgGray, Mat imgDst, Mat kernel) {
+    public Mat filter(Mat imgGray, Mat imgDst, Mat kernel) {
         // метод filter2D() - фильтр с произвольными значениями на основе мартицы свёртки
         // (OpenCV Java, Прохорёнок Н., с.200)
         int ddepth = -1; // глубина целевого изображения (по умолчанию - глубина оригинала)
@@ -223,6 +224,7 @@ public class Controller  implements Initializable {
         // BORDER_REPLICATE — повтор крайних пикселов
         // интерполяция пикселов
         filter2D(imgGray, imgDst, ddepth, kernel, anchor, delta, borderType);
+        return imgDst;
     }
 
     private void img_info(Mat imgMat) {
