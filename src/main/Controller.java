@@ -6,8 +6,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.InputEvent;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
@@ -16,15 +14,14 @@ import javafx.util.StringConverter;
 import org.opencv.core.*;
 import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
+
 import static org.opencv.imgproc.Imgproc.filter2D;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.ParameterizedType;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -32,15 +29,13 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Controller  implements Initializable {
-    // связка элементов окна с переменными по fx:id-имени
+    // связи элементов окна с переменными по имени fx:id
     @FXML
     private ImageView originalImg;
     @FXML
@@ -54,10 +49,10 @@ public class Controller  implements Initializable {
     List<Spinner> spArray;  // список элементов окна типа Spinner
     int filterSize;         // размер матрицы свёртки
 
-    Mat imgSrc, imgDst, imgGrayscale;   // матрицы оригинала, обработанного и в оттенках серого изображений
-    Mat filterMatrix = new Mat();       // матрица свёртки
-    Mat apply1Mat, apply2Mat;           // для записи на диск
-    private final Desktop desktop = Desktop.getDesktop(); // для записи на диск
+    Mat imgSrcMat, imgGrayscaleMat;  // матрицы оригинала, обработанного и в оттенках серого изображений
+    Mat filterMatrixMat;             // матрица свёртки
+    Mat apply1Mat, apply2Mat;        // для записи на диск
+    // private final Desktop desktop = Desktop.getDesktop(); // для открытия файла сопоставленным по типу приложением
 
     // поиск в папке ресурсов, если подключено в fxml
     InputStream picStream = getClass().getResourceAsStream("../resources/empty_img.png");
@@ -78,44 +73,39 @@ public class Controller  implements Initializable {
         originalImg.setImage(image);
 
         // преобразования изображения к матрице
-        imgSrc = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_UNCHANGED); // оригинальное изображение
-        imgGrayscale = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_GRAYSCALE); // оттенки серого
-        if (imgSrc.empty()) {
-            System.out.println("Изображение не загружено (возможно, кириллица в пути файла)");
+        imgSrcMat = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_UNCHANGED); // оригинальное изображение
+        imgGrayscaleMat = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_GRAYSCALE); // оттенки серого
+        if (imgSrcMat.empty()) {
+            // кириллица в пути в OpenCV недопустима и решена размещением файлов во временном каталоге
+            System.out.println("Изображение не загружено!");
         } else {
-            img_info(imgSrc);
+            img_info(imgSrcMat);
             // установка изображения в слот интерфейса окна
-            BufferedImage grayscaleBufImg = MatToBufferedImage(imgGrayscale);
+            BufferedImage grayscaleBufImg = MatToBufferedImage(imgGrayscaleMat);
             grayscaleImg.setImage(SwingFXUtils.toFXImage(grayscaleBufImg, null));
         }
         delTempPath(tmpPath); // удаление временного каталога с файлом изображения
-        initFilterMatrix(spArray); // инициализация матрицы свёртки
     }
 
     @FXML
     public void save_grayscale(MouseEvent mouseEvent) { // сохранение серого изображения на диск
-        saveFile(imgGrayscale);
+        saveFile(imgGrayscaleMat);
     }
     @FXML
     public void save_apply1(MouseEvent mouseEvent) { // сохранение Apply1 на диск
-        apply1Mat = Imgcodecs.imread("../resources/empty_img.png", Imgcodecs.IMREAD_UNCHANGED);
         saveFile(apply1Mat);
     }
     @FXML
     public void save_apply2(MouseEvent mouseEvent) { // сохранение Apply2 на диск
-        apply2Mat = Imgcodecs.imread("../resources/empty_img.png", Imgcodecs.IMREAD_UNCHANGED);
         saveFile(apply2Mat);
     }
     @FXML
     public void Apply1(ActionEvent actionEvent) {
-        viewMatrix(filterMatrix);
-        imgDst = filter(imgGrayscale, filterMatrix, initFilterMatrix(spArray)); // фильтрация изображения матрицей свёртки
-        // установка изображения в слот интерфейса окна
-        apply1Img.setImage(SwingFXUtils.toFXImage(MatToBufferedImage(imgDst), null));
+        apply1Mat = apply(apply1Img);
     }
     @FXML
     public void Apply2(ActionEvent actionEvent) {
-        viewMatrix(filterMatrix);
+        apply2Mat = apply(apply2Img);
     }
 
     /* способ активизации шаблона .fxml
@@ -126,14 +116,50 @@ public class Controller  implements Initializable {
      @param mouseEvent
      */
 
-    /**
-     * Initializes the controller class. This method is automatically called
-     * after the fxml file has been loaded.
-     */
     @Override //@FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        /**
+         * Initializes the controller class. This method is automatically called
+         * after the fxml file has been loaded.
+         */
         filterSize = (int) Math.sqrt(spArray.size());
         initInputMatrix();
+    }
+
+    private Mat apply(ImageView applyImg) {
+        Mat matr = initFilterMatrix(spArray);
+        viewMatrix(matr);
+        Mat applyMat = filter(imgSrcMat, new Mat(imgSrcMat.rows(), imgSrcMat.cols(), imgSrcMat.type()), matr); // фильтрация изображения матрицей свёртки
+        // установка изображения в слот интерфейса окна
+        applyImg.setImage(SwingFXUtils.toFXImage(MatToBufferedImage(applyMat), null));
+        return applyMat;
+    }
+
+    // преобразование изображения с помощью фильтра
+    public Mat filter(Mat imgSrc, Mat imgDst, Mat kernel) {
+        // метод filter2D() - фильтр с произвольными значениями на основе мартицы свёртки
+        // (OpenCV Java, Прохорёнок Н., с.200)
+        int ddepth = -1; // глубина целевого изображения (по умолчанию - глубина оригинала)
+        Point anchor = new Point(-1, -1); // координаты ядра свёртки (по умолчанию - центр матрицы)
+        double delta = 0; // прибавление к результату (по умолчанию - 0)
+        int borderType = Core.BORDER_REPLICATE; // тип рамки вокруг изображения (разд. 4.9). По умолчанию - BORDER_DEFAULT
+        // BORDER_REPLICATE — повтор крайних пикселов
+        // интерполяция пикселов
+        filter2D(imgSrc, imgDst, ddepth, kernel, anchor, delta, borderType);
+        return imgDst;
+    }
+
+    private Mat initFilterMatrix(List<Spinner> matrix) { // инициализация значениями (после нажатия на Apply)
+        // матрица свёртки из массива спиннеров
+        filterMatrixMat = new Mat(filterSize, filterSize, imgGrayscaleMat.type()); // инициализация матрицы свёртки
+        double[] data = new double[matrix.size()];  // данные для матрицы
+        System.out.print("\nИнициализация матрицы свёртки (data):");
+        for (int i=0; i<matrix.size(); i++) {
+            data[i] = 1.0 * (int) spArray.get(i).getValue();
+            System.out.print("  " + data[i]);
+        }
+        filterMatrixMat.put(0, 0, data);
+        return filterMatrixMat;
     }
 
     void initInputMatrix() { // инициализация Spinner-контролов
@@ -162,7 +188,7 @@ public class Controller  implements Initializable {
                         }
                     }
             );
-            System.out.println("sp" + i + ": " + spArray.get(i).getValue());
+            //System.out.println("sp" + i + ": " + spArray.get(i).getValue());
             // Дополнительные обработчики ввода (работают аналогично конвертеру)
             /*
             int finalI = i; // счётчик -> в константу для использования внутри обработчиков
@@ -190,17 +216,6 @@ public class Controller  implements Initializable {
         }
     }
 
-    private Mat initFilterMatrix(List<Spinner> matrix) { // инициализация значениями (после нажатия на Apply)
-        // матрица свёртки из массива спиннеров
-        filterMatrix = new Mat(filterSize, filterSize, imgGrayscale.type()); // инициализация матрицы свёртки
-        double[] data = new double[matrix.size()];  // данные для матрицы
-        for (int n=0; n<matrix.size(); n++) {
-            data[n] = 1.0 * (int) spArray.get(n).getValue();
-        }
-        filterMatrix.put(0, 0, data);
-        return filterMatrix;
-    }
-
     private void viewMatrix(Mat matrix){
         System.out.println("\nМатрица свёртки " + matrix.size() + " типа " + CvType.typeToString(matrix.type()) + ":\n"
                 + matrix.dump());
@@ -213,32 +228,10 @@ public class Controller  implements Initializable {
         }*/
     }
 
-    // преобразование изображения с помощью фильтра
-    public Mat filter(Mat imgGray, Mat imgDst, Mat kernel) {
-        // метод filter2D() - фильтр с произвольными значениями на основе мартицы свёртки
-        // (OpenCV Java, Прохорёнок Н., с.200)
-        int ddepth = -1; // глубина целевого изображения (по умолчанию - глубина оригинала)
-        Point anchor = new Point(-1, -1); // координаты ядра свётрки (по умолчанию - центр матрицы)
-        double delta = 0; // прибавление к результату (по умолчанию - 0)
-        int borderType = Core.BORDER_REPLICATE; // тип рамки вокруг изображения (разд. 4.9). По умолчанию - BORDER_DEFAULT
-        // BORDER_REPLICATE — повтор крайних пикселов
-        // интерполяция пикселов
-        filter2D(imgGray, imgDst, ddepth, kernel, anchor, delta, borderType);
-        return imgDst;
-    }
-
     private void img_info(Mat imgMat) {
         System.out.println("Type: " + CvType.typeToString(imgMat.type())
                 + "; Size WxH: " + imgMat.width() + "x" + imgMat.height()
                 + "px; Channels: " + imgMat.channels());
-    }
-
-    private boolean saveFile(Mat matImg) { // Сохранить файл
-        List<File> files = choiceFileDialog("save"); // список файлов
-        boolean saved = Imgcodecs.imwrite(files.get(0).toString(), matImg);
-        System.out.println(dateFormat.format(new Date())
-                + (saved ? "Изображение сохранено в " + files.get(0).toString(): "Не удалось сохранить изображение!"));
-        return saved;
     }
 
     /* Обработка загрузки и сохранения файлов */
@@ -256,30 +249,32 @@ public class Controller  implements Initializable {
         switch (mode) {
             case "load" -> { // Открытие файла
                 fileChooser.setTitle("Open file"); // заголовок диалога
-                file = fileChooser.showOpenDialog(Main.primaryStage); // Указываем окно текущей сцены
+                flist.add(fileChooser.showOpenDialog(Main.primaryStage)); // Указываем окно текущей сцены
+                /*
                 if (file != null) {
-                    if (openFile(file))
-                        flist.add(file);
-                    System.out.println(dateFormat.format(new Date()) + "Выбран файл: " + file.getAbsolutePath());
-                }
+                    if (openFile(file)) {
+                        System.out.println(dateFormat.format(new Date()) + "Выбран файл: " + file.getAbsolutePath());
+                    }
+                    // else -> вывод ошибки из openFile()
+                }*/
             }
             case "multiple" -> { // загрузка нескольких файлов - showOpenMultipleDialog
                 fileChooser.setTitle("Open some files"); // заголовок диалога
-                flist = fileChooser.showOpenMultipleDialog(Main.primaryStage);
-                if (flist != null) {
+                flist.addAll(fileChooser.showOpenMultipleDialog(Main.primaryStage));
+                if (flist.size() != 0) {
+                    /*
                     for (File nextfile : flist) {
                         openFile(nextfile);
-                    }
+                    }*/
                     System.out.println(dateFormat.format(new Date()) + "Выбрано несколько файлов из: " + flist.get(0).getParent());
                 }
             }
             case "save" -> { // сохранение файла
                 fileChooser.setTitle("Save the file"); // заголовок диалога
-                file = fileChooser.showSaveDialog(Main.primaryStage);
-                if (file != null) {
-                    flist.add(file);
+                flist.add(file = fileChooser.showSaveDialog(Main.primaryStage));
+                if (flist.size() != 0) {
                     try {
-                        ImageIO.write(SwingFXUtils.fromFXImage(saveImg, null), getFileExtension(file), file);
+                        ImageIO.write(SwingFXUtils.fromFXImage(saveImg, null), getFileExtension(file), flist.get(0));
                     } catch (IOException ex) {
                         System.out.println(ex.getMessage());
                     }
@@ -289,7 +284,9 @@ public class Controller  implements Initializable {
         return flist;
     }
 
-    private boolean openFile(File file) { // Открыть файл
+    // Не применяется
+    /*
+    private boolean openFile(File file) { // Открыть файл (открывает системное проиложение, сопоставленное с типом файла)
         boolean result = true;
         try {
             desktop.open(file);
@@ -298,12 +295,21 @@ public class Controller  implements Initializable {
                     Main.class.getName()).log(
                     Level.SEVERE, null, ex
             );
+            System.out.println(ex.getMessage()); // сообщение об ошибке
             result = false;
         }
         return result;
+    }*/
+
+    private boolean saveFile(Mat matImg) { // Сохранить файл
+        List<File> files = choiceFileDialog("save"); // список файлов
+        boolean saved = Imgcodecs.imwrite(files.get(0).toString(), matImg);
+        System.out.println(dateFormat.format(new Date())
+                + (saved ? "Изображение сохранено в " + files.get(0).toString(): "Не удалось сохранить изображение!"));
+        return saved;
     }
 
-        Path setTempPath(File file) throws IOException { // Создание временного каталога с файлом
+    Path setTempPath(File file) throws IOException { // Создание временного каталога с файлом
         Path newfile = null;
         File tmpPath = new File("C:/__tmp");
         if (tmpPath.exists() || tmpPath.mkdir()) {
