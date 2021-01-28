@@ -140,7 +140,7 @@ public class Controller  implements Initializable {
         Pattern p = Pattern.compile("^-?\\d+$"); // целые числа (в т.ч. отрицательные) // (\d+\.?\d*)? - вещественные чисел
         for (int i = 0; i < spArray.size(); i++) {
             // параметры спиннера // new Spinner(-5, 5, 1, 2)); // min, max, initial, step
-            spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValuectory(-255, 255, 0, 1));
+            spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-255, 255, 0, 1));
             spArray.get(i).setEditable(true); // ввод пользовательских значений
             spArray.get(i).getValueFactory().setConverter(
                     new StringConverter() { // проверка на введённое значение и -> конвертация значения
