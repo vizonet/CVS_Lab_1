@@ -68,7 +68,7 @@ public class Controller  implements Initializable {
         // public static Mat imread(String filename);
         // public static Mat imread(String filename, int flags); // сигнатура вызова
         List<File> files = choiceFileDialog("load"); // список файлов
-        tmpPath = setTempPath(files.get(0), true); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
+        tmpPath = setTempPath(files.get(0), "load"); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
         Image image = new Image(tmpPath.toUri().toString()); // формат пути: file:/C:/folder/file.jpg
         originalImg.setImage(image); // установка изображения в слот
 
@@ -299,7 +299,7 @@ public class Controller  implements Initializable {
     private boolean saveFile(Mat matImg) throws IOException { // Сохранить файл
         boolean saved = false;
         List<File> files = choiceFileDialog("save"); // список файлов
-        tmpPath = setTempPath(files.get(0), false); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
+        tmpPath = setTempPath(files.get(0), "save"); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
         /*
         if (files.size() != 0) {
             try { // сохранение изображения saveImg
@@ -311,7 +311,6 @@ public class Controller  implements Initializable {
         }
         */
         saved = Imgcodecs.imwrite(tmpPath.toString(), matImg); // сохранение во временный каталог без кириллицы в Path
-        copyfile(tmpPath.toFile(), files.get(0)); // копирование в целевой каталог
         System.out.println(dateFormat.format(new Date())
                 + (saved ? "Изображение сохранено в " + files.get(0).toString(): "Не удалось сохранить изображение!"));
 
@@ -319,26 +318,25 @@ public class Controller  implements Initializable {
         return saved;
     }
 
-    Path setTempPath(File file, boolean load) throws IOException { // Создание временного каталога с файлом
-        Path newfile = null;
+    Path setTempPath(File file, String mode) throws IOException { // Создание временного каталога с файлом
+        Path source = null, to = null;
         File tmpPath = new File(tempDir);
         if (tmpPath.exists() || tmpPath.mkdir()) {
-            if (load) {
-                newfile = copyfile(file, tmpPath);
-                System.out.println(dateFormat.format(new Date()) + "Создан временный каталог с файлом: " + newfile.toString());
-            } else {
-                newfile = tmpPath.toPath() + file.getName();
-                System.out.println(dateFormat.format(new Date()) + "Создан временный каталог: " + tmpPath.toString());
+            switch (mode) {
+                case "load":
+                    source = FileSystems.getDefault().getPath(file.getAbsolutePath());
+                    to = FileSystems.getDefault().getPath(tmpPath.getPath(), "__image." + getFileExtension(file));
+                    System.out.println(dateFormat.format(new Date()) + "Создан временный каталог с файлом: " + file.toString());
+                    break;
+                case "save":
+                    to = FileSystems.getDefault().getPath(file.getAbsolutePath());
+                    source = FileSystems.getDefault().getPath(tmpPath.getPath(), "__image." + getFileExtension(file));
+                    System.out.println(dateFormat.format(new Date()) + "Создан временный каталог: " + tmpPath.toString());
+                    break;
             }
         } else {
             System.out.println("Временный каталог не создан!");
         }
-        return newfile;
-    }
-
-    public Path copyfile(File file, File tmpPath) throws IOException {
-        Path source = FileSystems.getDefault().getPath(file.getAbsolutePath());
-        Path to = FileSystems.getDefault().getPath(tmpPath.getPath(), "__image." + getFileExtension(file));
         return Files.copy(source, to, REPLACE_EXISTING); // to.resolve(source.getFileName())
     }
 
