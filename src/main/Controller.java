@@ -54,9 +54,10 @@ public class Controller  implements Initializable {
     Mat apply1Mat, apply2Mat;        // для записи на диск
     // private final Desktop desktop = Desktop.getDesktop(); // для открытия файла сопоставленным по типу приложением
 
+    private final String tempDir = "C:/__tmp"; // временный каталог для решения проблем с кириллицей в путях файлов в OpenCV
     // поиск в папке ресурсов, если подключено в fxml
-    InputStream picStream = getClass().getResourceAsStream("../resources/empty_img.png");
-    Image saveImg = new Image(picStream);
+    InputStream picEmpty = getClass().getResourceAsStream("../resources/empty_img.png"); // Stream
+    Image saveImg = new Image(picEmpty);
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss > "); // формат даты
     Path tmpPath = null; // временный путь
@@ -67,10 +68,10 @@ public class Controller  implements Initializable {
         // public static Mat imread(String filename);
         // public static Mat imread(String filename, int flags); // сигнатура вызова
         List<File> files = choiceFileDialog("load"); // список файлов
-        // установка изображения в слот
-        tmpPath = setTempPath(files.get(0)); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
+        tmpPath = setTempPath(files.get(0), true); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
         Image image = new Image(tmpPath.toUri().toString()); // формат пути: file:/C:/folder/file.jpg
-        originalImg.setImage(image);
+        originalImg.setImage(image); // установка изображения в слот
+
 
         // преобразования изображения к матрице
         imgSrcMat = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_UNCHANGED); // оригинальное изображение
@@ -88,15 +89,15 @@ public class Controller  implements Initializable {
     }
 
     @FXML
-    public void save_grayscale(MouseEvent mouseEvent) { // сохранение серого изображения на диск
+    public void save_grayscale(MouseEvent mouseEvent) throws IOException { // сохранение серого изображения на диск
         saveFile(imgGrayscaleMat);
     }
     @FXML
-    public void save_apply1(MouseEvent mouseEvent) { // сохранение Apply1 на диск
+    public void save_apply1(MouseEvent mouseEvent) throws IOException { // сохранение Apply1 на диск
         saveFile(apply1Mat);
     }
     @FXML
-    public void save_apply2(MouseEvent mouseEvent) { // сохранение Apply2 на диск
+    public void save_apply2(MouseEvent mouseEvent) throws IOException { // сохранение Apply2 на диск
         saveFile(apply2Mat);
     }
     @FXML
@@ -235,7 +236,7 @@ public class Controller  implements Initializable {
     }
 
     /* Обработка загрузки и сохранения файлов */
-    public List<File> choiceFileDialog(String mode) { // ActionEvent event
+    public List<File> choiceFileDialog(String mode) throws IOException { // ActionEvent event
         File file = new File(""); // загруженный файл
         List<File> flist = new ArrayList<File>(); // список файлов
         FileChooser fileChooser = new FileChooser(); // Класс работы с диалогом выборки и сохранения
@@ -250,13 +251,14 @@ public class Controller  implements Initializable {
             case "load" -> { // Открытие файла
                 fileChooser.setTitle("Open file"); // заголовок диалога
                 flist.add(fileChooser.showOpenDialog(Main.primaryStage)); // Указываем окно текущей сцены
-                /*
-                if (file != null) {
+                if (flist.size() != 0) {
+                    /*
                     if (openFile(file)) {
-                        System.out.println(dateFormat.format(new Date()) + "Выбран файл: " + file.getAbsolutePath());
                     }
                     // else -> вывод ошибки из openFile()
-                }*/
+                    */
+                    System.out.println(dateFormat.format(new Date()) + "Выбран файл: " + flist.get(0).getAbsolutePath());
+                }
             }
             case "multiple" -> { // загрузка нескольких файлов - showOpenMultipleDialog
                 fileChooser.setTitle("Open some files"); // заголовок диалога
@@ -272,13 +274,6 @@ public class Controller  implements Initializable {
             case "save" -> { // сохранение файла
                 fileChooser.setTitle("Save the file"); // заголовок диалога
                 flist.add(file = fileChooser.showSaveDialog(Main.primaryStage));
-                if (flist.size() != 0) {
-                    try {
-                        ImageIO.write(SwingFXUtils.fromFXImage(saveImg, null), getFileExtension(file), flist.get(0));
-                    } catch (IOException ex) {
-                        System.out.println(ex.getMessage());
-                    }
-                }
             }
         }
         return flist;
@@ -301,26 +296,50 @@ public class Controller  implements Initializable {
         return result;
     }*/
 
-    private boolean saveFile(Mat matImg) { // Сохранить файл
+    private boolean saveFile(Mat matImg) throws IOException { // Сохранить файл
+        boolean saved = false;
         List<File> files = choiceFileDialog("save"); // список файлов
-        boolean saved = Imgcodecs.imwrite(files.get(0).toString(), matImg);
+        tmpPath = setTempPath(files.get(0), false); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
+        /*
+        if (files.size() != 0) {
+            try { // сохранение изображения saveImg
+                ImageIO.write(SwingFXUtils.fromFXImage(saveImg, null), getFileExtension(files.get(0)), tmpPath.toFile());
+                saved = true;
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        */
+        saved = Imgcodecs.imwrite(tmpPath.toString(), matImg); // сохранение во временный каталог без кириллицы в Path
+        copyfile(tmpPath.toFile(), files.get(0)); // копирование в целевой каталог
         System.out.println(dateFormat.format(new Date())
                 + (saved ? "Изображение сохранено в " + files.get(0).toString(): "Не удалось сохранить изображение!"));
+
+        delTempPath(tmpPath); // удаление временного каталога с файлом изображения
         return saved;
     }
 
-    Path setTempPath(File file) throws IOException { // Создание временного каталога с файлом
+    Path setTempPath(File file, boolean load) throws IOException { // Создание временного каталога с файлом
         Path newfile = null;
-        File tmpPath = new File("C:/__tmp");
+        File tmpPath = new File(tempDir);
         if (tmpPath.exists() || tmpPath.mkdir()) {
-            Path source = FileSystems.getDefault().getPath(file.getAbsolutePath());
-            Path to = FileSystems.getDefault().getPath(tmpPath.getPath(), "__image." + getFileExtension(file));
-            newfile = Files.copy(source, to, REPLACE_EXISTING); // to.resolve(source.getFileName())
-            System.out.println(dateFormat.format(new Date()) + "Создан временный каталог с файлом: " + newfile.toString());
+            if (load) {
+                newfile = copyfile(file, tmpPath);
+                System.out.println(dateFormat.format(new Date()) + "Создан временный каталог с файлом: " + newfile.toString());
+            } else {
+                newfile = tmpPath.toPath() + file.getName();
+                System.out.println(dateFormat.format(new Date()) + "Создан временный каталог: " + tmpPath.toString());
+            }
         } else {
             System.out.println("Временный каталог не создан!");
         }
         return newfile;
+    }
+
+    public Path copyfile(File file, File tmpPath) throws IOException {
+        Path source = FileSystems.getDefault().getPath(file.getAbsolutePath());
+        Path to = FileSystems.getDefault().getPath(tmpPath.getPath(), "__image." + getFileExtension(file));
+        return Files.copy(source, to, REPLACE_EXISTING); // to.resolve(source.getFileName())
     }
 
     void delTempPath(Path tmpPath) {
