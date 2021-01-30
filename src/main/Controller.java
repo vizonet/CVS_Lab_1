@@ -56,22 +56,19 @@ public class Controller  implements Initializable {
 
     private final String tempDir = "C:/__tmp"; // временный каталог для решения проблем с кириллицей в путях файлов в OpenCV
     // поиск в папке ресурсов, если подключено в fxml
-    InputStream picEmpty = getClass().getResourceAsStream("../resources/empty_img.png"); // Stream
+    InputStream picEmpty = getClass().getResourceAsStream("../resources/empty_img.png");
     Image saveImg = new Image(picEmpty);
-
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss > "); // формат даты
-    Path tmpPath = null; // временный путь
 
     @FXML
-    public void load_image(MouseEvent mouseEvent) throws IOException { // обработчик кнопки "Load Image" MouseEvent mouseEvent../resources/empty_img.png
+    public void load_image(ActionEvent actionEvent) throws IOException { // обработчик кнопки "Load Image" MouseEvent mouseEvent../resources/empty_img.png
         // загрузка изображений (Прохоренок Н.)
         // public static Mat imread(String filename);
         // public static Mat imread(String filename, int flags); // сигнатура вызова
         List<File> files = choiceFileDialog("load"); // список файлов
-        tmpPath = setTempPath(files.get(0), "load"); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
+        Path tmpPath = setTempPath(files.get(0), "load"); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
         Image image = new Image(tmpPath.toUri().toString()); // формат пути: file:/C:/folder/file.jpg
         originalImg.setImage(image); // установка изображения в слот
-
 
         // преобразования изображения к матрице
         imgSrcMat = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_UNCHANGED); // оригинальное изображение
@@ -89,15 +86,15 @@ public class Controller  implements Initializable {
     }
 
     @FXML
-    public void save_grayscale(MouseEvent mouseEvent) throws IOException { // сохранение серого изображения на диск
+    public void save_grayscale(ActionEvent actionEvent) throws IOException { // сохранение серого изображения на диск
         saveFile(imgGrayscaleMat);
     }
     @FXML
-    public void save_apply1(MouseEvent mouseEvent) throws IOException { // сохранение Apply1 на диск
+    public void save_apply1(ActionEvent actionEvent) throws IOException { // сохранение Apply1 на диск
         saveFile(apply1Mat);
     }
     @FXML
-    public void save_apply2(MouseEvent mouseEvent) throws IOException { // сохранение Apply2 на диск
+    public void save_apply2(ActionEvent actionEvent) throws IOException { // сохранение Apply2 на диск
         saveFile(apply2Mat);
     }
     @FXML
@@ -299,7 +296,8 @@ public class Controller  implements Initializable {
     private boolean saveFile(Mat matImg) throws IOException { // Сохранить файл
         boolean saved = false;
         List<File> files = choiceFileDialog("save"); // список файлов
-        tmpPath = setTempPath(files.get(0), "save"); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
+        Path tmpPath = setTempPath(files.get(0), "save"); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
+        Path to = FileSystems.getDefault().getPath(files.get(0).getAbsolutePath());
         /*
         if (files.size() != 0) {
             try { // сохранение изображения saveImg
@@ -311,6 +309,7 @@ public class Controller  implements Initializable {
         }
         */
         saved = Imgcodecs.imwrite(tmpPath.toString(), matImg); // сохранение во временный каталог без кириллицы в Path
+        Files.copy(tmpPath, to, REPLACE_EXISTING); // to.resolve(source.getFileName())
         System.out.println(dateFormat.format(new Date())
                 + (saved ? "Изображение сохранено в " + files.get(0).toString(): "Не удалось сохранить изображение!"));
 
@@ -327,17 +326,16 @@ public class Controller  implements Initializable {
                     source = FileSystems.getDefault().getPath(file.getAbsolutePath());
                     to = FileSystems.getDefault().getPath(tmpPath.getPath(), "__image." + getFileExtension(file));
                     System.out.println(dateFormat.format(new Date()) + "Создан временный каталог с файлом: " + file.toString());
-                    break;
+                    return Files.copy(source, to, REPLACE_EXISTING); // to.resolve(source.getFileName())
                 case "save":
-                    to = FileSystems.getDefault().getPath(file.getAbsolutePath());
                     source = FileSystems.getDefault().getPath(tmpPath.getPath(), "__image." + getFileExtension(file));
                     System.out.println(dateFormat.format(new Date()) + "Создан временный каталог: " + tmpPath.toString());
-                    break;
+                    return source;
             }
         } else {
             System.out.println("Временный каталог не создан!");
         }
-        return Files.copy(source, to, REPLACE_EXISTING); // to.resolve(source.getFileName())
+        return null;
     }
 
     void delTempPath(Path tmpPath) {
