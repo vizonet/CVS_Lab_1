@@ -125,9 +125,9 @@ public class Controller  implements Initializable {
     }
 
     private Mat apply(ImageView applyImg) {
-        Mat matr = initFilterMatrix(spArray);
-        viewMatrix(matr);
-        Mat applyMat = filter(imgSrcMat, new Mat(imgSrcMat.rows(), imgSrcMat.cols(), imgSrcMat.type()), matr); // фильтрация изображения матрицей свёртки
+        Mat fmatr = initFilterMatrix(spArray);
+        viewMatrix(fmatr);
+        Mat applyMat = filter(imgSrcMat, new Mat(), fmatr); //imgSrcMat.rows(), imgSrcMat.cols(), imgSrcMat.type() фильтрация изображения матрицей свёртки
         // установка изображения в слот интерфейса окна
         applyImg.setImage(SwingFXUtils.toFXImage(MatToBufferedImage(applyMat), null));
         return applyMat;
@@ -140,16 +140,16 @@ public class Controller  implements Initializable {
         int ddepth = -1; // глубина целевого изображения (по умолчанию - глубина оригинала)
         Point anchor = new Point(-1, -1); // координаты ядра свёртки (по умолчанию - центр матрицы)
         double delta = 0; // прибавление к результату (по умолчанию - 0)
-        int borderType = Core.BORDER_REPLICATE; // тип рамки вокруг изображения (разд. 4.9). По умолчанию - BORDER_DEFAULT
-        // BORDER_REPLICATE — повтор крайних пикселов
-        // интерполяция пикселов
+        // тип рамки вокруг изображения (разд. 4.9). По умолчанию - BORDER_DEFAULT // borderInterpolate - интерполяция
+        int borderType = Core.BORDER_REPLICATE; // BORDER_REPLICATE — повтор крайних пикселов
+        // фильтрация
         filter2D(imgSrc, imgDst, ddepth, kernel, anchor, delta, borderType);
         return imgDst;
     }
 
     private Mat initFilterMatrix(List<Spinner> matrix) { // инициализация значениями (после нажатия на Apply)
         // матрица свёртки из массива спиннеров
-        filterMatrixMat = new Mat(filterSize, filterSize, imgGrayscaleMat.type()); // инициализация матрицы свёртки
+        filterMatrixMat = new Mat(filterSize, filterSize, CvType.CV_32F); // imgGrayscaleMat.type() инициализация матрицы свёртки
         double[] data = new double[matrix.size()];  // данные для матрицы
         System.out.print("\nИнициализация матрицы свёртки (data):");
         for (int i=0; i<matrix.size(); i++) {

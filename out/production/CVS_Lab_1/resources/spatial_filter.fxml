@@ -21,10 +21,10 @@
       <Pane layoutX="259.0" layoutY="58.0" prefHeight="91.0" prefWidth="151.0" />
       <Group layoutX="18.0" layoutY="58.0">
          <children>
-            <Button fx:id="loadImg" layoutX="61.0" layoutY="156.0" mnemonicParsing="false" onMouseClicked="#load_image" text="New image" />
-            <Button fx:id="saveGrayscale" layoutX="284.0" layoutY="156.0" mnemonicParsing="false" onMouseClicked="#save_grayscale" text="Save image" />
-            <Button fx:id="saveApply1" layoutX="62.0" layoutY="405.0" mnemonicParsing="false" onMouseClicked="#save_apply1" text="Save image" />
-            <Button fx:id="saveApply2" layoutX="284.0" layoutY="405.0" mnemonicParsing="false" onMouseClicked="#save_apply2" text="Save image" />
+            <Button fx:id="loadImg" layoutX="61.0" layoutY="156.0" mnemonicParsing="false" onAction="#load_image" text="New image" />
+            <Button fx:id="saveGrayscale" layoutX="284.0" layoutY="156.0" mnemonicParsing="false" onAction="#save_grayscale" text="Save image" />
+            <Button fx:id="saveApply1" layoutX="62.0" layoutY="405.0" mnemonicParsing="false" onAction="#save_apply1" text="Save image" />
+            <Button fx:id="saveApply2" layoutX="284.0" layoutY="405.0" mnemonicParsing="false" onAction="#save_apply2" text="Save image" />
             <ImageView fx:id="originalImg" fitHeight="150.0" fitWidth="200.0" layoutY="-10.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@empty_img.png" />
