@@ -149,15 +149,31 @@ public class Controller  implements Initializable {
 
     private Mat initFilterMatrix(List<Spinner> matrix) { // инициализация значениями (после нажатия на Apply)
         // матрица свёртки из массива спиннеров
-        filterMatrixMat = new Mat(filterSize, filterSize, CvType.CV_32F); // imgGrayscaleMat.type() инициализация матрицы свёртки
+        filterMatrixMat = new Mat(filterSize, filterSize, imgGrayscaleMat.type()); // CvType.CV_32F инициализация матрицы свёртки
         double[] data = new double[matrix.size()];  // данные для матрицы
-        System.out.print("\nИнициализация матрицы свёртки (data):");
+        System.out.print("\nИнициализация матрицы свёртки (data):\n");
         for (int i=0; i<matrix.size(); i++) {
             data[i] = 1.0 * (int) spArray.get(i).getValue();
-            System.out.print("  " + data[i]);
+            System.out.print("  " + data[i] + (((i+1) % filterSize == 0) ? "\n" : ""));
         }
-        filterMatrixMat.put(0, 0, data);
+        filterMatrixMat.put(0, 0, normalized(data));
         return filterMatrixMat;
+    }
+
+    private double[] normalized(double[] data) { // Нормализация матрицы свёртки
+        // поиск суммы элементов
+        double summ = 0;
+        for (int i=0; i<data.length; i++) { summ += data[i]; }
+        // нормализация
+        System.out.print("\nНормализованная матрица свёртки:\n");
+        for (int i=0; i<data.length; i++) {
+            data[i] = (summ > 0) ? data[i]/summ : 0;
+            System.out.print("  " + data[i] + (((i+1) % filterSize == 0) ? "\n" : ""));
+        }
+        summ = 0;
+        for (int i=0; i<data.length; i++) { summ += data[i]; }
+        System.out.print("Сумма элементов после нормализации: " + summ + "\n");
+        return data;
     }
 
     void initInputMatrix() { // инициализация Spinner-контролов
@@ -167,24 +183,24 @@ public class Controller  implements Initializable {
             spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-255, 255, 0, 1));
             spArray.get(i).setEditable(true); // ввод пользовательских значений
             spArray.get(i).getValueFactory().setConverter(
-                    new StringConverter() { // проверка на введённое значение и -> конвертация значения
-                        @Override
-                        public String toString(Object obj) {
-                            return (obj == null) ? "0" : obj.toString();
-                        }
-                        @Override
-                        public Integer fromString(String s) {
-                            if (s.matches(p.toString())) {
-                                try {
-                                    return Integer.valueOf(s);
-                                }
-                                catch (NumberFormatException e) {
-                                    return 0;
-                                }
-                            }
-                            return 0;
-                        }
+                new StringConverter() { // проверка на введённое значение и -> конвертация значения
+                    @Override
+                    public String toString(Object obj) {
+                        return (obj == null) ? "0" : obj.toString();
                     }
+                    @Override
+                    public Integer fromString(String s) {
+                        if (s.matches(p.toString())) {
+                            try {
+                                return Integer.valueOf(s);
+                            }
+                            catch (NumberFormatException e) {
+                                return 0;
+                            }
+                        }
+                        return 0;
+                    }
+                }
             );
             //System.out.println("sp" + i + ": " + spArray.get(i).getValue());
             // Дополнительные обработчики ввода (работают аналогично конвертеру)
