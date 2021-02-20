@@ -49,7 +49,7 @@ public class Controller  implements Initializable {
     List<Spinner> spArray;  // список элементов окна типа Spinner
     int filterSize;         // размер матрицы свёртки
 
-    Mat imgSrcMat, imgGrayscaleMat;  // матрицы оригинала, обработанного и в оттенках серого изображений
+    Mat imgSrcMat, imgGrayscaleMat;  // матрицы оригинала и в оттенках серого изображений
     Mat filterMatrixMat;             // матрица свёртки
     Mat apply1Mat, apply2Mat;        // для записи на диск
     // private final Desktop desktop = Desktop.getDesktop(); // для открытия файла сопоставленным по типу приложением
@@ -74,7 +74,7 @@ public class Controller  implements Initializable {
         imgSrcMat = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_UNCHANGED); // оригинальное изображение
         imgGrayscaleMat = Imgcodecs.imread(tmpPath.toString(), Imgcodecs.IMREAD_GRAYSCALE); // оттенки серого
         if (imgSrcMat.empty()) {
-            // кириллица в пути в OpenCV недопустима и решена размещением файлов во временном каталоге
+            // кириллица в пути в OpenCV недопустима и решена размещением файлов во временном каталоге с удалением после чтения файла
             System.out.println("Изображение не загружено!");
         } else {
             img_info(imgSrcMat);
@@ -134,49 +134,50 @@ public class Controller  implements Initializable {
     }
 
     // преобразование изображения с помощью фильтра
-    public Mat filter(Mat imgSrc, Mat imgDst, Mat kernel) {
+    public Mat filter(Mat imgGrayscaleMat, Mat imgDst, Mat kernel) { // imgSrc
         // метод filter2D() - фильтр с произвольными значениями на основе мартицы свёртки
         // (OpenCV Java, Прохорёнок Н., с.200)
-        int ddepth = -1; // глубина целевого изображения (по умолчанию - глубина оригинала)
-        Point anchor = new Point(-1, -1); // координаты ядра свёртки (по умолчанию - центр матрицы)
-        double delta = 0; // прибавление к результату (по умолчанию - 0)
+        int ddepth = -1; // глубина целевого изображения - глубина оригинала
+        Point anchor = new Point(-1, -1); // координаты ядра свёртки - центр матрицы
+        double delta = 0; // прибавление к результату - 0
         // тип рамки вокруг изображения (разд. 4.9). По умолчанию - BORDER_DEFAULT // borderInterpolate - интерполяция
         int borderType = Core.BORDER_REPLICATE; // BORDER_REPLICATE — повтор крайних пикселов
         // фильтрация
-        filter2D(imgSrc, imgDst, ddepth, kernel, anchor, delta, borderType);
+        filter2D(imgGrayscaleMat, imgDst, ddepth, kernel, anchor, 256, borderType); //imgSrc  delta
         return imgDst;
     }
 
     private Mat initFilterMatrix(List<Spinner> matrix) { // инициализация значениями (после нажатия на Apply)
         // матрица свёртки из массива спиннеров
-        filterMatrixMat = new Mat(filterSize, filterSize, imgGrayscaleMat.type()); // CvType.CV_32F инициализация матрицы свёртки
+        filterMatrixMat = new Mat(filterSize, filterSize, CvType.CV_32FC1); // imgGrayscaleMat.type() -> CV_8UC1 -> unsigned одноканальное
         double[] data = new double[matrix.size()];  // данные для матрицы
-        System.out.print("\nИнициализация матрицы свёртки (data):\n");
+        System.out.print("\nВходные элементы фильтра (data):\n");
         for (int i=0; i<matrix.size(); i++) {
             data[i] = 1.0 * (int) spArray.get(i).getValue();
             System.out.print("  " + data[i] + (((i+1) % filterSize == 0) ? "\n" : ""));
         }
-        filterMatrixMat.put(0, 0, normalized(data));
+        filterMatrixMat.put(0, 0, normalized(data)); //
         return filterMatrixMat;
     }
 
     double arrSumm(double arr[]) { // Сумма элементов массива
         double summ = 0;
         for (int i=0; i<arr.length; i++) { summ += arr[i]; }
-        return summ;
+        return Math.abs(summ);
     }
 
     private double[] normalized(double[] data) { // Нормализация матрицы свёртки
         // поиск суммы элементов
         double summ = arrSumm(data);
+        System.out.print("Модуль суммы элементов: " + summ + "\n");
         // нормализация
-        System.out.print("\nНормализованная матрица свёртки:\n");
+        System.out.print("\nНормированные элементы фильтра (data):\n");
         for (int i=0; i<data.length; i++) {
-            data[i] = (summ > 0) ? data[i]/summ : 0;
+            data[i] = (summ != 0) ? data[i]/summ : 0;
             System.out.print("  " + data[i] + (((i+1) % filterSize == 0) ? "\n" : ""));
         }
         summ = arrSumm(data);
-        System.out.print("Сумма элементов после нормализации: " + summ + "\n");
+        System.out.print("Модуль суммы элементов [0...1]: " + summ + "\n");
         return data;
     }
 
@@ -235,7 +236,7 @@ public class Controller  implements Initializable {
     }
 
     private void viewMatrix(Mat matrix){
-        System.out.println("\nМатрица свёртки " + matrix.size() + " типа " + CvType.typeToString(matrix.type()) + ":\n"
+        System.out.println("\nМатрица свёртки (Mat) " + matrix.size() + " типа " + CvType.typeToString(matrix.type()) + ":\n"
                 + matrix.dump());
         /*
         for (int j = 0, r = matrix.rows(); j < r; j++) {
@@ -247,9 +248,9 @@ public class Controller  implements Initializable {
     }
 
     private void img_info(Mat imgMat) {
-        System.out.println("Type: " + CvType.typeToString(imgMat.type())
-                + "; Size WxH: " + imgMat.width() + "x" + imgMat.height()
-                + "px; Channels: " + imgMat.channels());
+        System.out.println("Тип: " + CvType.typeToString(imgMat.type())
+                + " | Размер: " + imgMat.width() + " x " + imgMat.height()
+                + " | Каналы: " + imgMat.channels());
     }
 
     /* Обработка загрузки и сохранения файлов */
