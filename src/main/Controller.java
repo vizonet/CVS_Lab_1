@@ -160,18 +160,22 @@ public class Controller  implements Initializable {
         return filterMatrixMat;
     }
 
+    double arrSumm(double arr[]) { // Сумма элементов массива
+        double summ = 0;
+        for (int i=0; i<arr.length; i++) { summ += arr[i]; }
+        return summ;
+    }
+
     private double[] normalized(double[] data) { // Нормализация матрицы свёртки
         // поиск суммы элементов
-        double summ = 0;
-        for (int i=0; i<data.length; i++) { summ += data[i]; }
+        double summ = arrSumm(data);
         // нормализация
         System.out.print("\nНормализованная матрица свёртки:\n");
         for (int i=0; i<data.length; i++) {
             data[i] = (summ > 0) ? data[i]/summ : 0;
             System.out.print("  " + data[i] + (((i+1) % filterSize == 0) ? "\n" : ""));
         }
-        summ = 0;
-        for (int i=0; i<data.length; i++) { summ += data[i]; }
+        summ = arrSumm(data);
         System.out.print("Сумма элементов после нормализации: " + summ + "\n");
         return data;
     }
