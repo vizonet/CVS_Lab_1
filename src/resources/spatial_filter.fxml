@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -123,7 +122,7 @@ editable="true" amountToStepBy="1" initialValue="0" max="255" min="-255"
                   </HBox>
                </children>
             </VBox>
-            <Label alignment="CENTER" layoutY="135.0" prefHeight="26.0" prefWidth="197.0" text="Range values: [-255; 255]">
+            <Label alignment="CENTER" layoutY="135.0" prefHeight="26.0" prefWidth="197.0" text="Range values: [-256; 256]">
                <font>
                   <Font name="Artifakt Element Bold" size="13.0" />
                </font>
@@ -151,33 +150,33 @@ editable="true" amountToStepBy="1" initialValue="0" max="255" min="-255"
             <Button layoutX="117.0" minWidth="0.0" mnemonicParsing="false" onAction="#Apply2" prefHeight="25.0" prefWidth="80.0" text="Apply 2" textAlignment="CENTER" />
          </children>
       </Group>
-      <Group layoutX="506.0" layoutY="168.0">
+      <Group layoutX="533.0" layoutY="172.0">
          <children>
+            <Spinner fx:id="spOffset" layoutX="40.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="65.0" />
             <Label layoutY="5.0" text="Offset:" />
-            <TextField layoutX="40.0" prefHeight="26.0" prefWidth="66.0" />
          </children>
       </Group>
       <Group layoutX="463.0" layoutY="263.0">
          <children>
-            <Button layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Zero Matrix" textFill="RED" />
             <Label alignment="CENTER" contentDisplay="CENTER" layoutX="59.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="78.0" text="Presets" textAlignment="CENTER" wrapText="true">
                <font>
                   <Font name="Lucida Fax Demibold" size="18.0" />
                </font>
             </Label>
-            <Button layoutX="1.0" layoutY="75.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="BLUR" />
-            <Button layoutX="104.0" layoutY="75.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Light BLUR" />
-            <Button layoutX="104.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Negative" />
-            <Button layoutX="1.0" layoutY="159.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="EMBOSS" />
-            <Button layoutX="104.0" layoutY="159.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Light EMBOSS" />
-            <Button layoutX="1.0" layoutY="117.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="SHARPEN" />
-            <Button layoutX="104.0" layoutY="117.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Light SHARPEN">
+            <Button onAction="#zeroMatrix" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Zero Matrix" textFill="RED" />
+            <Button onAction="#negative" layoutX="104.0" layoutY="34.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Negative" />
+            <Button onAction="#blur" layoutX="1.0" layoutY="75.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="BLUR" />
+            <Button onAction="#lightBlur" layoutX="104.0" layoutY="75.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Light BLUR" />
+            <Button onAction="#emboss" layoutX="1.0" layoutY="159.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="EMBOSS" />
+            <Button onAction="#lightEmboss" layoutX="104.0" layoutY="159.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Light EMBOSS" />
+            <Button onAction="#sharpen" layoutX="1.0" layoutY="117.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="SHARPEN" />
+            <Button onAction="#lightSharpen" layoutX="104.0" layoutY="117.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Light SHARPEN">
                <font>
                   <Font size="11.0" />
                </font>
             </Button>
          </children>
       </Group>
-      <Button layoutX="580.0" layoutY="468.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="About" />
+      <Button onAction="#about" layoutX="580.0" layoutY="468.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="About" />
    </children>
 </AnchorPane>

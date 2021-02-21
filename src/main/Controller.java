@@ -47,6 +47,8 @@ public class Controller  implements Initializable {
 
     @FXML                   // инциализация спиннеров (filter matrix)
     List<Spinner> spArray;  // список элементов окна типа Spinner
+    @FXML                   // инциализация спиннеров (filter matrix)
+    Spinner spOffset;       // элемент spOffset - смещение delta при фильтрации
     int filterSize;         // размер матрицы свёртки
 
     Mat imgSrcMat, imgGrayscaleMat;  // матрицы оригинала и в оттенках серого изображений
@@ -60,6 +62,50 @@ public class Controller  implements Initializable {
     Image saveImg = new Image(picEmpty);
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss > "); // формат даты
 
+    @FXML
+    public void zeroMatrix(ActionEvent actionEvent) throws IOException { // Пресеты: обнуление матрицы спинеров
+        System.out.println("\nПресет: обнуление матрицы спинеров\n");
+        presetSpinnerMartrix(new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+    }
+    @FXML
+    public void negative(ActionEvent actionEvent) throws IOException { // Пресеты: негатив
+        System.out.println("\nПресет: негатив\n");
+        presetSpinnerMartrix(new int[] {0, 0, 0, 0, -1, 0, 0, 0, 0, 256});
+    }
+    @FXML
+    public void blur(ActionEvent actionEvent) throws IOException { // Пресеты: размытие
+        System.out.println("\nПресет: размытие\n");
+        presetSpinnerMartrix(new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 0});
+    }
+    @FXML
+    public void lightBlur(ActionEvent actionEvent) throws IOException { // Пресеты: легкое размытие
+        System.out.println("\nПресет: легкое размытие\n");
+        presetSpinnerMartrix(new int[] {1, 1, 0, 1, 1, 0, 0, 0, 0, 0});
+    }
+    @FXML
+    public void sharpen(ActionEvent actionEvent) throws IOException { // Пресеты: резкость
+        System.out.println("\nПресет: резкость\n");
+        presetSpinnerMartrix(new int[] {0, -1, 0, -1, 5, -1, 0, -1, 0, 0});
+    }
+    @FXML
+    public void lightSharpen(ActionEvent actionEvent) throws IOException { // Пресеты: легкая резкость
+        System.out.println("\nПресет: легкая резкость\n");
+        presetSpinnerMartrix(new int[] {-1, 0, 0, 0, 2, 0, 0, 0, 0, 0});
+    }
+    @FXML
+    public void emboss(ActionEvent actionEvent) throws IOException { // Пресеты: тиснение
+        System.out.println("\nПресет: тиснение\n");
+        presetSpinnerMartrix(new int[] {-2, -1, 0, -1, 1, 1, 0, 1, 2, 0});
+    }
+    @FXML
+    public void lightEmboss(ActionEvent actionEvent) throws IOException { // Пресеты: легкое тиснение
+        System.out.println("\nПресет: легкое тиснение\n");
+        presetSpinnerMartrix(new int[] {1, 0, 0, 0, 1, 0, 0, 0, -1, 0});
+    }
+    @FXML
+    public void about(ActionEvent actionEvent) throws IOException { // О программе
+        System.out.println("\nО программе\n");
+    }
     @FXML
     public void load_image(ActionEvent actionEvent) throws IOException { // обработчик кнопки "Load Image" MouseEvent mouseEvent../resources/empty_img.png
         // загрузка изображений (Прохоренок Н.)
@@ -124,6 +170,14 @@ public class Controller  implements Initializable {
         initInputMatrix();
     }
 
+    private void presetSpinnerMartrix(int[] arr) { // установка пресетов значений матрицы фильтра и смещения Offset
+        int i;
+        for (i=0; i < spArray.size(); i++) {
+            spArray.get(i).getValueFactory().setValue(arr[i]); // матрица
+        }
+        spOffset.getValueFactory().setValue(arr[i]); // смещение
+    }
+
     private Mat apply(ImageView applyImg) {
         Mat fmatr = initFilterMatrix(spArray);
         viewMatrix(fmatr);
@@ -139,7 +193,7 @@ public class Controller  implements Initializable {
         // (OpenCV Java, Прохорёнок Н., с.200)
         int ddepth = -1; // глубина целевого изображения - глубина оригинала
         Point anchor = new Point(-1, -1); // координаты ядра свёртки - центр матрицы
-        double delta = 0; // прибавление к результату - 0
+        double delta = 1.0 * (int)spOffset.getValueFactory().getValue(); // offset - прибавление к результату
         // тип рамки вокруг изображения (разд. 4.9). По умолчанию - BORDER_DEFAULT // borderInterpolate - интерполяция
         int borderType = Core.BORDER_REPLICATE; // BORDER_REPLICATE — повтор крайних пикселов
         // фильтрация
@@ -183,9 +237,10 @@ public class Controller  implements Initializable {
 
     void initInputMatrix() { // инициализация Spinner-контролов
         Pattern p = Pattern.compile("^-?\\d+$"); // целые числа (в т.ч. отрицательные) // (\d+\.?\d*)? - вещественные чисел
+        spArray.add(spOffset); // добавление в массив спиннера Offset для инициализации фабрики значений
         for (int i = 0; i < spArray.size(); i++) {
             // параметры спиннера // new Spinner(-5, 5, 1, 2)); // min, max, initial, step
-            spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-255, 255, 0, 1));
+            spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-256, 256, 0, 1));
             spArray.get(i).setEditable(true); // ввод пользовательских значений
             spArray.get(i).getValueFactory().setConverter(
                 new StringConverter() { // проверка на введённое значение и -> конвертация значения
@@ -233,11 +288,13 @@ public class Controller  implements Initializable {
             });*/
             // вывод значений инициализированных спиннеров
         }
+        spArray.remove(spOffset); // исключение Offset из массива
     }
 
     private void viewMatrix(Mat matrix){
         System.out.println("\nМатрица свёртки (Mat) " + matrix.size() + " типа " + CvType.typeToString(matrix.type()) + ":\n"
                 + matrix.dump());
+        System.out.println("Offset = " + spOffset.getValue());
         /*
         for (int j = 0, r = matrix.rows(); j < r; j++) {
             for (int i = 0, c = matrix.cols(); i < c; i++) {
@@ -493,5 +550,6 @@ public class Controller  implements Initializable {
         m.put(0, 0, buf);
         return m;
     }
+
     // --------------
 }
