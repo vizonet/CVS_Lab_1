@@ -143,7 +143,7 @@ public class Controller  implements Initializable {
         // тип рамки вокруг изображения (разд. 4.9). По умолчанию - BORDER_DEFAULT // borderInterpolate - интерполяция
         int borderType = Core.BORDER_REPLICATE; // BORDER_REPLICATE — повтор крайних пикселов
         // фильтрация
-        filter2D(imgGrayscaleMat, imgDst, ddepth, kernel, anchor, 256, borderType); //imgSrc  delta
+        filter2D(imgGrayscaleMat, imgDst, ddepth, kernel, anchor, delta, borderType); //imgSrc 256
         return imgDst;
     }
 
