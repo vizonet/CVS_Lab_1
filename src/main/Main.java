@@ -36,7 +36,7 @@ public class Main extends Application {
         Scene scene = new Scene(loadFXML("../resources/spatial_filter"));
         primaryStage.setScene(scene); // , 300, 275
         primaryStage.setTitle("Linear spatial filtering"); // заголовок окна
-        InputStream iconStream = getClass().getResourceAsStream("../resources/icon1.jpg");
+        InputStream iconStream = getClass().getResourceAsStream("../resources/icon.jpg");
         Image icon = new Image(iconStream);
         primaryStage.getIcons().add(icon);
         primaryStage.show();
