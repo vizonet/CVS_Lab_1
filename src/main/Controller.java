@@ -3,6 +3,7 @@ package main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.ImageView;
@@ -44,12 +45,17 @@ public class Controller  implements Initializable {
     private ImageView apply1Img;
     @FXML
     private ImageView apply2Img;
+    @FXML
+    private Label preset1;
+    @FXML
+    private Label preset2;
 
     @FXML                   // инциализация спиннеров (filter matrix)
     List<Spinner> spArray;  // список элементов окна типа Spinner
     @FXML                   // инциализация спиннеров (filter matrix)
     Spinner spOffset;       // элемент spOffset - смещение delta при фильтрации
     int filterSize;         // размер матрицы свёртки
+    String presetTxt;       // наименование пресета для вьюпорта Apply 1 и 2
 
     Mat imgSrcMat, imgGrayscaleMat;  // матрицы оригинала и в оттенках серого изображений
     Mat filterMatrixMat;             // матрица свёртки
@@ -71,36 +77,43 @@ public class Controller  implements Initializable {
     public void negative(ActionEvent actionEvent) throws IOException { // Пресеты: негатив
         System.out.println("\nПресет: негатив\n");
         presetSpinnerMartrix(new int[] {0, 0, 0, 0, -1, 0, 0, 0, 0, 256});
+        presetTxt = "negative";
     }
     @FXML
     public void blur(ActionEvent actionEvent) throws IOException { // Пресеты: размытие
         System.out.println("\nПресет: размытие\n");
         presetSpinnerMartrix(new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 0});
+        presetTxt = "blur";
     }
     @FXML
     public void lightBlur(ActionEvent actionEvent) throws IOException { // Пресеты: легкое размытие
         System.out.println("\nПресет: легкое размытие\n");
         presetSpinnerMartrix(new int[] {1, 1, 0, 1, 1, 0, 0, 0, 0, 0});
+        presetTxt = "light blur";
     }
     @FXML
     public void sharpen(ActionEvent actionEvent) throws IOException { // Пресеты: резкость
         System.out.println("\nПресет: резкость\n");
         presetSpinnerMartrix(new int[] {0, -1, 0, -1, 5, -1, 0, -1, 0, 0});
+        presetTxt = "sharpen";
     }
     @FXML
     public void lightSharpen(ActionEvent actionEvent) throws IOException { // Пресеты: легкая резкость
         System.out.println("\nПресет: легкая резкость\n");
         presetSpinnerMartrix(new int[] {-1, 0, 0, 0, 2, 0, 0, 0, 0, 0});
+        presetTxt = "light sharpen";
     }
     @FXML
     public void emboss(ActionEvent actionEvent) throws IOException { // Пресеты: тиснение
         System.out.println("\nПресет: тиснение\n");
         presetSpinnerMartrix(new int[] {-2, -1, 0, -1, 1, 1, 0, 1, 2, 0});
+        presetTxt = "emboss";
     }
     @FXML
     public void lightEmboss(ActionEvent actionEvent) throws IOException { // Пресеты: легкое тиснение
         System.out.println("\nПресет: легкое тиснение\n");
         presetSpinnerMartrix(new int[] {1, 0, 0, 0, 1, 0, 0, 0, -1, 0});
+        presetTxt = "light emboss";
     }
     @FXML
     public void about(ActionEvent actionEvent) throws IOException { // О программе
@@ -130,7 +143,6 @@ public class Controller  implements Initializable {
         }
         delTempPath(tmpPath); // удаление временного каталога с файлом изображения
     }
-
     @FXML
     public void save_grayscale(ActionEvent actionEvent) throws IOException { // сохранение серого изображения на диск
         saveFile(imgGrayscaleMat);
@@ -146,10 +158,12 @@ public class Controller  implements Initializable {
     @FXML
     public void Apply1(ActionEvent actionEvent) {
         apply1Mat = apply(apply1Img);
+        preset1.setText(presetTxt);
     }
     @FXML
     public void Apply2(ActionEvent actionEvent) {
         apply2Mat = apply(apply2Img);
+        preset2.setText(presetTxt);
     }
 
     /* способ активизации шаблона .fxml
@@ -286,7 +300,10 @@ public class Controller  implements Initializable {
                 }
                 System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue()); // вывод значения при изменении
             });*/
-            // вывод значений инициализированных спиннеров
+            // событие спиннеров - изменение значения
+            spArray.get(i).valueProperty().addListener((observable, oldValue, newValue) -> {
+                presetTxt = "user defined";
+            });
         }
         spArray.remove(spOffset); // исключение Offset из массива
     }
