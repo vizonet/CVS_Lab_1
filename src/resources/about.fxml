@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.About">
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <Pane prefHeight="405.0" prefWidth="364.0">
+         <children>
+            <Label layoutX="27.0" layoutY="79.0" text="&quot;Системы компьютерного зрения&quot;">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.7815789580345154" blue="0.2475000023841858" />
+                           </color>
+                        </Stop>
+                        <Stop offset="0.007633587786259542">
+                           <color>
+                              <Color red="0.7815789580345154" blue="0.2475000023841858" />
+                           </color>
+                        </Stop>
+                        <Stop offset="0.33893129770992364">
+                           <color>
+                              <Color green="0.6342105269432068" blue="0.12684211134910583" />
+                           </color>
+                        </Stop>
+                        <Stop offset="0.7007633587786258">
+                           <color>
+                              <Color green="0.4743947684764862" blue="0.7300000190734863" />
+                           </color>
+                        </Stop>
+                        <Stop offset="0.9389312977099237">
+                           <color>
+                              <Color red="0.7815789580345154" green="0.5861842036247253" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.7815789580345154" green="0.5861842036247253" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill>
+            </Label>
+            <Label layoutX="42.0" layoutY="6.0" text="Фильтрация изображений" textFill="#0057ff">
+               <font>
+                  <Font name="Monotype Corsiva" size="28.0" />
+               </font>
+            </Label>
+            <Label layoutX="38.0" layoutY="53.0" text="- лабораторная работа по дисциплине">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label layoutX="80.0" layoutY="146.0" text="Высоцкий Евгений, АММ-19">
+               <font>
+                  <Font name="Cambria" size="16.0" />
+               </font>
+            </Label>
+            <Label layoutX="21.0" layoutY="198.0" text="Преподаватель:" underline="true">
+               <font>
+                  <Font name="Cambria" size="14.0" />
+               </font>
+            </Label>
+            <Group layoutX="138.0" layoutY="305.0">
+               <children>
+                  <Label layoutY="10.0" text="НГТУ, АВТФ">
+                     <font>
+                        <Font name="Cambria" size="16.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="27.0" layoutY="29.0" prefHeight="20.0" prefWidth="37.0" text="2021">
+                     <font>
+                        <Font name="Cambria" size="16.0" />
+                     </font>
+                  </Label>
+                  <Button layoutX="12.0" layoutY="59.0" mnemonicParsing="false" onAction="#onClickOK" prefHeight="25.0" prefWidth="63.0" text="ОК" />
+               </children>
+            </Group>
+            <Label layoutX="21.0" layoutY="124.0" text="Выполнил:" underline="true">
+               <font>
+                  <Font name="Cambria" size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="71.0" layoutY="220.0" text="Гаврилов Андрей Владимирович">
+               <font>
+                  <Font name="Cambria" size="16.0" />
+               </font>
+            </Label>
+            <Hyperlink layoutX="113.0" layoutY="165.0" text="viz2006@yandex.ru" textFill="#00596e">
+               <font>
+                  <Font name="Century Gothic" size="14.0" />
+               </font>
+            </Hyperlink>
+            <Label layoutX="138.0" layoutY="243.0" text="Кафедра ВТ" textFill="#0081bd">
+               <font>
+                  <Font name="Century Gothic Bold" size="14.0" />
+               </font>
+            </Label>
+            <Text fill="#006f23" layoutX="29.0" layoutY="299.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Используемые технологии: Java, JavaFX, OpenCV " wrappingWidth="317.0322265625">
+               <font>
+                  <Font name="Arial Narrow" size="16.0" />
+               </font>
+            </Text>
+         </children>
+      </Pane>
+   </children>
+</GridPane>

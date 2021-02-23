@@ -7,10 +7,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.opencv.core.*;
 import org.opencv.core.Point;
@@ -31,11 +31,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.imageio.ImageIO;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-public class Controller  implements Initializable {
+public class Controller implements Initializable {
     // связи элементов окна с переменными по имени fx:id
     @FXML
     private ImageView originalImg;
@@ -49,13 +48,16 @@ public class Controller  implements Initializable {
     private Label preset1;
     @FXML
     private Label preset2;
+    @FXML
+    private Label spRangeLbl;
 
-    @FXML                   // инциализация спиннеров (filter matrix)
-    List<Spinner> spArray;  // список элементов окна типа Spinner
-    @FXML                   // инциализация спиннеров (filter matrix)
-    Spinner spOffset;       // элемент spOffset - смещение delta при фильтрации
-    int filterSize;         // размер матрицы свёртки
-    String presetTxt;       // наименование пресета для вьюпорта Apply 1 и 2
+    @FXML // инциализация спиннеров (filter matrix)
+    List<Spinner> spArray;              // список элементов окна типа Spinner
+    @FXML                               // инциализация спиннеров (filter matrix)
+    Spinner spOffset;                   // элемент spOffset - смещение delta при фильтрации
+    int filterSize;                     // размер матрицы свёртки
+    String presetTxt;                   // наименование пресета для вьюпорта Apply 1 и 2
+    int minVal = -256, maxVal = 256;    // граничные значения спиннеров
 
     Mat imgSrcMat, imgGrayscaleMat;  // матрицы оригинала и в оттенках серого изображений
     Mat filterMatrixMat;             // матрица свёртки
@@ -64,14 +66,16 @@ public class Controller  implements Initializable {
 
     private final String tempDir = "C:/__tmp"; // временный каталог для решения проблем с кириллицей в путях файлов в OpenCV
     // поиск в папке ресурсов, если подключено в fxml
-    InputStream picEmpty = getClass().getResourceAsStream("../resources/empty_img.png");
-    Image saveImg = new Image(picEmpty);
+    // InputStream picEmpty = getClass().getResourceAsStream("../resources/empty_img.png");
+    // Image saveImg = new Image(picEmpty);
+    // Mat emptySaveImgMat = Imgcodecs.imread("../resources/empty_img.png", Imgcodecs.IMREAD_UNCHANGED); // для установки в слоты
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss > "); // формат даты
 
     @FXML
     public void zeroMatrix(ActionEvent actionEvent) throws IOException { // Пресеты: обнуление матрицы спинеров
         System.out.println("\nПресет: обнуление матрицы спинеров\n");
         presetSpinnerMartrix(new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+        presetTxt = "zero matrix";
     }
     @FXML
     public void negative(ActionEvent actionEvent) throws IOException { // Пресеты: негатив
@@ -116,8 +120,12 @@ public class Controller  implements Initializable {
         presetTxt = "light emboss";
     }
     @FXML
-    public void about(ActionEvent actionEvent) throws IOException { // О программе
+    public void about(ActionEvent actionEvent) throws Exception { // О программе
         System.out.println("\nО программе\n");
+        // вывод окна about
+        Stage stage = new Stage();
+        Main.window_init(stage,"About program...","../resources/about");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("../resources/icon.jpg")));// вывод иконки окна
     }
     @FXML
     public void load_image(ActionEvent actionEvent) throws IOException { // обработчик кнопки "Load Image" MouseEvent mouseEvent../resources/empty_img.png
@@ -182,6 +190,7 @@ public class Controller  implements Initializable {
          */
         filterSize = (int) Math.sqrt(spArray.size());
         initInputMatrix();
+        spRangeLbl.setText("Range values: [" + minVal + ", " + maxVal + "]");
     }
 
     private void presetSpinnerMartrix(int[] arr) { // установка пресетов значений матрицы фильтра и смещения Offset
@@ -254,7 +263,7 @@ public class Controller  implements Initializable {
         spArray.add(spOffset); // добавление в массив спиннера Offset для инициализации фабрики значений
         for (int i = 0; i < spArray.size(); i++) {
             // параметры спиннера // new Spinner(-5, 5, 1, 2)); // min, max, initial, step
-            spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(-256, 256, 0, 1));
+            spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(minVal, maxVal, 0, 1));
             spArray.get(i).setEditable(true); // ввод пользовательских значений
             spArray.get(i).getValueFactory().setConverter(
                 new StringConverter() { // проверка на введённое значение и -> конвертация значения
@@ -567,6 +576,5 @@ public class Controller  implements Initializable {
         m.put(0, 0, buf);
         return m;
     }
-
     // --------------
 }

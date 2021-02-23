@@ -23,8 +23,8 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception { // запуск главного окна программы
-        /** // получаем переданные параметры
+    public void start(Stage stage) throws Exception { // запуск главного окна программы
+        /** // параметры командной строки
         Application.Parameters params = getParameters();
         List<String> unnamedParams = getParameters().getUnnamed();
         int i =0;
@@ -32,14 +32,8 @@ public class Main extends Application {
             i++;
             System.out.printf("%d - %s \n", i, param);
         }*/
-        //Parent root = FXMLLoader.load(getClass().getResource("../resources/spatial_filter.fxml"));
-        Scene scene = new Scene(loadFXML("../resources/spatial_filter"));
-        primaryStage.setScene(scene); // , 300, 275
-        primaryStage.setTitle("Linear spatial filtering"); // заголовок окна
-        InputStream iconStream = getClass().getResourceAsStream("../resources/icon.jpg");
-        Image icon = new Image(iconStream);
-        primaryStage.getIcons().add(icon);
-        primaryStage.show();
+        window_init(stage,"Linear spatial filtering","../resources/spatial_filter");
+        set_icon("../resources/icon.jpg", stage);
     }
 
     @Override
@@ -65,8 +59,24 @@ public class Main extends Application {
         launch(args);// запуск окна программы
     }
 
-    private static Parent loadFXML(String fxml) throws IOException { // загрузчик fxml-шаблонов
+    public static Parent loadFXML(String fxml) throws IOException { // загрузчик fxml-шаблонов
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
     }
+
+    public static void window_init(Stage stage, String title, String fxml_path) throws Exception { // инициализация окон
+        // Parent root = FXMLLoader.load(getClass().getResource(fxml_path));
+        Scene scene = new Scene(loadFXML(fxml_path));
+        stage.setScene(scene); // , 300, 275
+        stage.setTitle(title); // заголовок окна
+        stage.show();
+    }
+
+    public void set_icon(String icon_path, Stage stage) {
+        // вывод иконки окна
+        InputStream iconStream = getClass().getResourceAsStream(icon_path);
+        Image icon = new Image(iconStream);
+        stage.getIcons().add(icon);
+    }
 }
+
