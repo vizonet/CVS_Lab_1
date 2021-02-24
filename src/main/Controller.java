@@ -238,7 +238,9 @@ public class Controller implements Initializable {
 
     double arrSumm(double[] arr) { // Сумма элементов массива
         double summ = 0;
-        for (int i=0; i<arr.length; i++) { summ += arr[i]; }
+        for (double v : arr) {
+            summ += v;
+        }
         return Math.abs(summ);
     }
 
@@ -260,29 +262,29 @@ public class Controller implements Initializable {
     void initInputMatrix() { // инициализация Spinner-контролов
         Pattern p = Pattern.compile("^-?\\d+$"); // целые числа (в т.ч. отрицательные) // (\d+\.?\d*)? - вещественные чисел
         spArray.add(spOffset); // добавление в массив спиннера Offset для инициализации фабрики значений
-        for (int i = 0; i < spArray.size(); i++) {
+        for (Spinner spinner : spArray) {
             // параметры спиннера // new Spinner(-5, 5, 1, 2)); // min, max, initial, step
-            spArray.get(i).setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(minVal, maxVal, 0, 1));
-            spArray.get(i).setEditable(true); // ввод пользовательских значений
-            spArray.get(i).getValueFactory().setConverter(
-                new StringConverter() { // проверка на введённое значение и -> конвертация значения
-                    @Override
-                    public String toString(Object obj) {
-                        return (obj == null) ? "0" : obj.toString();
-                    }
-                    @Override
-                    public Integer fromString(String s) {
-                        if (s.matches(p.toString())) {
-                            try {
-                                return Integer.valueOf(s);
-                            }
-                            catch (NumberFormatException e) {
-                                return 0;
-                            }
+            spinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(minVal, maxVal, 0, 1));
+            spinner.setEditable(true); // ввод пользовательских значений
+            spinner.getValueFactory().setConverter(
+                    new StringConverter() { // проверка на введённое значение и -> конвертация значения
+                        @Override
+                        public String toString(Object obj) {
+                            return (obj == null) ? "0" : obj.toString();
                         }
-                        return 0;
+
+                        @Override
+                        public Integer fromString(String s) {
+                            if (s.matches(p.toString())) {
+                                try {
+                                    return Integer.valueOf(s);
+                                } catch (NumberFormatException e) {
+                                    return 0;
+                                }
+                            }
+                            return 0;
+                        }
                     }
-                }
             );
             //System.out.println("sp" + i + ": " + spArray.get(i).getValue());
             // Дополнительные обработчики ввода (работают аналогично конвертеру)
@@ -309,9 +311,7 @@ public class Controller implements Initializable {
                 System.out.println("sp" + finalI + " = " + spArray.get(finalI).getValue()); // вывод значения при изменении
             });*/
             // событие спиннеров - изменение значения
-            spArray.get(i).valueProperty().addListener((observable, oldValue, newValue) -> {
-                presetTxt = "user defined";
-            });
+            spinner.valueProperty().addListener((observable, oldValue, newValue) -> presetTxt = "user defined");
         }
         spArray.remove(spOffset); // исключение Offset из массива
     }
@@ -336,7 +336,7 @@ public class Controller implements Initializable {
     }
 
     /* Обработка загрузки и сохранения файлов */
-    public List<File> choiceFileDialog(String mode) throws IOException { // ActionEvent event
+    public List<File> choiceFileDialog(String mode) { // ActionEvent event
         File file = new File(""); // загруженный файл
         List<File> flist = new ArrayList<>(); // список файлов
         FileChooser fileChooser = new FileChooser(); // Класс работы с диалогом выборки и сохранения
@@ -424,16 +424,18 @@ public class Controller implements Initializable {
         Path source, to;
         File tmpPath = new File(tempDir);
         if (tmpPath.exists() || tmpPath.mkdir()) {
-            switch (mode) {
-                case "load":
+            switch (mode) { // enhanсed swith
+                case "load" -> {
                     source = FileSystems.getDefault().getPath(file.getAbsolutePath());
                     to = FileSystems.getDefault().getPath(tmpPath.getPath(), "__image." + getFileExtension(file));
                     System.out.println(dateFormat.format(new Date()) + "Создан временный каталог с файлом: " + file.toString());
                     return Files.copy(source, to, REPLACE_EXISTING); // to.resolve(source.getFileName())
-                case "save":
+                }
+                case "save" -> {
                     source = FileSystems.getDefault().getPath(tmpPath.getPath(), "__image." + getFileExtension(file));
                     System.out.println(dateFormat.format(new Date()) + "Создан временный каталог: " + tmpPath.toString());
                     return source;
+                }
             }
         } else {
             System.out.println("Временный каталог не создан!");
