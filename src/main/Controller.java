@@ -1,6 +1,5 @@
 package main;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -72,55 +71,55 @@ public class Controller implements Initializable {
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss > "); // формат даты
 
     @FXML
-    public void zeroMatrix(ActionEvent actionEvent) throws IOException { // Пресеты: обнуление матрицы спинеров
+    public void zeroMatrix() { // Пресеты: обнуление матрицы спинеров
         System.out.println("\nПресет: обнуление матрицы спинеров\n");
         presetSpinnerMartrix(new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
         presetTxt = "zero matrix";
     }
     @FXML
-    public void negative(ActionEvent actionEvent) throws IOException { // Пресеты: негатив
+    public void negative() { // Пресеты: негатив
         System.out.println("\nПресет: негатив\n");
         presetSpinnerMartrix(new int[] {0, 0, 0, 0, -1, 0, 0, 0, 0, 256});
         presetTxt = "negative";
     }
     @FXML
-    public void blur(ActionEvent actionEvent) throws IOException { // Пресеты: размытие
+    public void blur() { // Пресеты: размытие
         System.out.println("\nПресет: размытие\n");
         presetSpinnerMartrix(new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 0});
         presetTxt = "blur";
     }
     @FXML
-    public void lightBlur(ActionEvent actionEvent) throws IOException { // Пресеты: легкое размытие
+    public void lightBlur() { // Пресеты: легкое размытие
         System.out.println("\nПресет: легкое размытие\n");
         presetSpinnerMartrix(new int[] {1, 1, 0, 1, 1, 0, 0, 0, 0, 0});
         presetTxt = "light blur";
     }
     @FXML
-    public void sharpen(ActionEvent actionEvent) throws IOException { // Пресеты: резкость
+    public void sharpen() { // Пресеты: резкость
         System.out.println("\nПресет: резкость\n");
         presetSpinnerMartrix(new int[] {0, -1, 0, -1, 5, -1, 0, -1, 0, 0});
         presetTxt = "sharpen";
     }
     @FXML
-    public void lightSharpen(ActionEvent actionEvent) throws IOException { // Пресеты: легкая резкость
+    public void lightSharpen() { // Пресеты: легкая резкость
         System.out.println("\nПресет: легкая резкость\n");
         presetSpinnerMartrix(new int[] {-1, 0, 0, 0, 2, 0, 0, 0, 0, 0});
         presetTxt = "light sharpen";
     }
     @FXML
-    public void emboss(ActionEvent actionEvent) throws IOException { // Пресеты: тиснение
+    public void emboss() { // Пресеты: тиснение
         System.out.println("\nПресет: тиснение\n");
         presetSpinnerMartrix(new int[] {-2, -1, 0, -1, 1, 1, 0, 1, 2, 0});
         presetTxt = "emboss";
     }
     @FXML
-    public void lightEmboss(ActionEvent actionEvent) throws IOException { // Пресеты: легкое тиснение
+    public void lightEmboss() { // Пресеты: легкое тиснение
         System.out.println("\nПресет: легкое тиснение\n");
         presetSpinnerMartrix(new int[] {1, 0, 0, 0, 1, 0, 0, 0, -1, 0});
         presetTxt = "light emboss";
     }
     @FXML
-    public void about(ActionEvent actionEvent) throws Exception { // О программе
+    public void about() throws Exception { // О программе
         System.out.println("\nО программе\n");
         // вывод окна about
         Stage stage = new Stage();
@@ -128,7 +127,7 @@ public class Controller implements Initializable {
         stage.getIcons().add(new Image(getClass().getResourceAsStream("../resources/icon.jpg")));// вывод иконки окна
     }
     @FXML
-    public void load_image(ActionEvent actionEvent) throws IOException { // обработчик кнопки "Load Image" MouseEvent mouseEvent../resources/empty_img.png
+    public void load_image() throws IOException { // обработчик кнопки "Load Image" MouseEvent mouseEvent../resources/empty_img.png
         // загрузка изображений (Прохоренок Н.)
         // public static Mat imread(String filename);
         // public static Mat imread(String filename, int flags); // сигнатура вызова
@@ -152,24 +151,24 @@ public class Controller implements Initializable {
         delTempPath(tmpPath); // удаление временного каталога с файлом изображения
     }
     @FXML
-    public void save_grayscale(ActionEvent actionEvent) throws IOException { // сохранение серого изображения на диск
+    public void save_grayscale() throws IOException { // сохранение серого изображения на диск
         saveFile(imgGrayscaleMat);
     }
     @FXML
-    public void save_apply1(ActionEvent actionEvent) throws IOException { // сохранение Apply1 на диск
+    public void save_apply1() throws IOException { // сохранение Apply1 на диск
         saveFile(apply1Mat);
     }
     @FXML
-    public void save_apply2(ActionEvent actionEvent) throws IOException { // сохранение Apply2 на диск
+    public void save_apply2() throws IOException { // сохранение Apply2 на диск
         saveFile(apply2Mat);
     }
     @FXML
-    public void Apply1(ActionEvent actionEvent) {
+    public void Apply1() {
         apply1Mat = apply(apply1Img);
         preset1.setText(presetTxt);
     }
     @FXML
-    public void Apply2(ActionEvent actionEvent) {
+    public void Apply2() {
         apply2Mat = apply(apply2Img);
         preset2.setText(presetTxt);
     }
@@ -237,7 +236,7 @@ public class Controller implements Initializable {
         return filterMatrixMat;
     }
 
-    double arrSumm(double arr[]) { // Сумма элементов массива
+    double arrSumm(double[] arr) { // Сумма элементов массива
         double summ = 0;
         for (int i=0; i<arr.length; i++) { summ += arr[i]; }
         return Math.abs(summ);
@@ -339,7 +338,7 @@ public class Controller implements Initializable {
     /* Обработка загрузки и сохранения файлов */
     public List<File> choiceFileDialog(String mode) throws IOException { // ActionEvent event
         File file = new File(""); // загруженный файл
-        List<File> flist = new ArrayList<File>(); // список файлов
+        List<File> flist = new ArrayList<>(); // список файлов
         FileChooser fileChooser = new FileChooser(); // Класс работы с диалогом выборки и сохранения
         /** // для одного варианта выбора типа
          fileChooser.setTitle("Open Image");     // Заголовок диалога
@@ -398,7 +397,7 @@ public class Controller implements Initializable {
     }*/
 
     private boolean saveFile(Mat matImg) throws IOException { // Сохранить файл
-        boolean saved = false;
+        boolean saved;
         List<File> files = choiceFileDialog("save"); // список файлов
         Path tmpPath = setTempPath(files.get(0), "save"); // копирование файла в path на латиннице (OpenCV не понимает кириллицу в пути)
         Path to = FileSystems.getDefault().getPath(files.get(0).getAbsolutePath());
@@ -422,7 +421,7 @@ public class Controller implements Initializable {
     }
 
     Path setTempPath(File file, String mode) throws IOException { // Создание временного каталога с файлом
-        Path source = null, to = null;
+        Path source, to;
         File tmpPath = new File(tempDir);
         if (tmpPath.exists() || tmpPath.mkdir()) {
             switch (mode) {
@@ -516,7 +515,7 @@ public class Controller implements Initializable {
         }
         else
             return null;
-        int type = 0;
+        int type;
         if (m.channels() == 1)
             type = BufferedImage.TYPE_BYTE_GRAY;
         else if (m.channels() == 3)
@@ -527,7 +526,7 @@ public class Controller implements Initializable {
             return null;
         byte[] buf = new byte[m.channels() * m.cols() * m.rows()];
         m.get(0, 0, buf);
-        byte tmp = 0;
+        byte tmp;
         if (m.channels() == 4) { // BGRA => ABGR
             for (int i = 0; i < buf.length; i += 4) {
                 tmp = buf[i + 3];
@@ -546,7 +545,7 @@ public class Controller implements Initializable {
 
     public static Mat BufferedImageToMat(BufferedImage img) { // из буфера в матрицу
         if (img == null) return new Mat();
-        int type = 0;
+        int type;
         if (img.getType() == BufferedImage.TYPE_BYTE_GRAY) {
             type = CvType.CV_8UC1;
         }
@@ -565,7 +564,7 @@ public class Controller implements Initializable {
             return m;
         }
         byte[] buf = Arrays.copyOf(data, data.length);
-        byte tmp = 0;
+        byte tmp;
         for (int i = 0; i < buf.length; i += 4) { // ABGR => BGRA
             tmp = buf[i];
             buf[i] = buf[i + 1];
