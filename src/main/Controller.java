@@ -337,8 +337,7 @@ public class Controller implements Initializable {
 
     /* Обработка загрузки и сохранения файлов */
     public List<File> choiceFileDialog(String mode) { // ActionEvent event
-        File file = new File(""); // загруженный файл
-        List<File> flist = new ArrayList<>(); // список файлов
+        List<File> flist = new ArrayList<>(); // список загруженных файлов
         FileChooser fileChooser = new FileChooser(); // Класс работы с диалогом выборки и сохранения
         /** // для одного варианта выбора типа
          fileChooser.setTitle("Open Image");     // Заголовок диалога
@@ -373,7 +372,7 @@ public class Controller implements Initializable {
             }
             case "save" -> { // сохранение файла
                 fileChooser.setTitle("Save the file"); // заголовок диалога
-                flist.add(file = fileChooser.showSaveDialog(Main.primaryStage));
+                flist.add(fileChooser.showSaveDialog(Main.primaryStage));
             }
         }
         return flist;
